@@ -1,12 +1,11 @@
-const express = require('express');
 const needle = require('needle');
-const router = express.Router();
+require('dotenv').config();
 
 const ipgeoURL = process.env.API_IPGEO_URL;
 const keyName = process.env.API_IPGEO_KEY_NAME;
 const keyValue = process.env.API_IPGEO_KEY_VALUE;
 
-router.get('/ip', async (req, res) => {
+const ipgeo = async (req, res) => {
   try {
     const params = new URLSearchParams({
       [keyName]: keyValue
@@ -23,6 +22,6 @@ router.get('/ip', async (req, res) => {
       error: "An error occurred while fetching geolocation data",
     });
   }
-})
+}
 
-module.exports = router;
+module.exports = ipgeo;

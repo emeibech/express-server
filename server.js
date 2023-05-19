@@ -11,7 +11,6 @@ app.use(cors());
 
 // Routes
 app.use('/', require(path.join(__dirname, 'routes', 'index')));
-app.use('/api', require(path.join(__dirname, 'routes', 'ipgeo')));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

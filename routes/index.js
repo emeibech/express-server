@@ -1,4 +1,5 @@
 const express = require('express');
+const ipgeo = require('./ipgeo');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -10,5 +11,7 @@ router.get('/', (req, res) => {
     res.status(500).json({ error });
   }
 });
+
+router.get('/api/ip', ipgeo);
 
 module.exports = router;
