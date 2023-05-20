@@ -14,12 +14,6 @@ const ipgeo = async () => {
     const apiRes = await needle('get',`${ipgeoURL}?${params}`);
     const data = apiRes.body;
 
-    // console.log({
-    //   coutryCode: data.country_code2,
-    //   lat: data.latitude,
-    //   long: data.longitude,
-    // })
-
     return data;
   } catch (error) {
     console.error(error);
