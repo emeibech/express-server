@@ -1,12 +1,22 @@
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 require('dotenv').config();
 
 const port = process.env.PORT || 3001;
 const app = express();
 
-// Middleware
+// Rate limit
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter);
+app.set('trust proxy', 1);
+
+// CORS middleware
 app.use(cors());
 
 // Routes
