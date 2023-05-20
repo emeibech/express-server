@@ -1,6 +1,5 @@
 const needle = require('needle');
 const ipgeo = require('./ipgeo');
-const url = require('url');
 require('dotenv').config();
 
 const weatherUrl = process.env.API_OW_WEATHER_URL;
@@ -10,12 +9,12 @@ const keyValue = process.env.API_OW_KEY_VALUE;
 
 const weather = async (req) => {
   try {
-    const weatherParams = new URLSearchParams({
-      [keyName]: keyValue,
-      ...url.parse(req.url, true).query
-    });
+    const weatherParams = new URL(req.url, `http://${req.headers.host}`)
+      .searchParams;
 
-    const weatherData = await needle('get',`${weatherUrl}?${weatherParams}`);
+    weatherParams.append(keyName, keyValue);
+
+    const weatherData = await needle('get', `${weatherUrl}?${weatherParams}`);
     const lat = weatherData.body.coord.lat;
     const lon = weatherData.body.coord.lon;
 
@@ -27,16 +26,16 @@ const weather = async (req) => {
     });
 
     const forecastData = await needle('get', `${oneCallUrl}?${forecastParams}`);
-    
+
     const data = {
       weatherData: weatherData.body,
       forecastData: forecastData.body,
-    }
+    };
 
     return data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 module.exports = weather;
