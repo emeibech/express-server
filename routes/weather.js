@@ -1,5 +1,6 @@
 const needle = require('needle');
 const ipgeo = require('./ipgeo');
+require('dotenv').config();
 
 const weatherUrl = process.env.API_OW_WEATHER_URL;
 const oneCallUrl = process.env.API_OW_ONECALL_URL;

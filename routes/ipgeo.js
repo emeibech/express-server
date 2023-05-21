@@ -1,4 +1,5 @@
 const needle = require('needle');
+require('dotenv').config();
 
 const ipgeoURL = process.env.API_IPGEO_URL;
 const keyName = process.env.API_IPGEO_KEY_NAME;
