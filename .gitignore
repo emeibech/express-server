@@ -1,3 +1,8 @@
+#Folders
 node_modules
+
+#Environment variables
 .env
+
+# .rest file for testing api
 get_requests.rest
