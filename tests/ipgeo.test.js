@@ -10,7 +10,7 @@ describe('ipgeo unit test', () => {
   });
 
   it('makes a GET request with correct URL and parameters', async () => {
-    const mockResponse = { body: { weatherData: 'Weather Data' } };
+    const mockResponse = { body: { ipData: "IP Address Data" } };
     needle.mockResolvedValue(mockResponse);
 
     await ipgeo();
@@ -25,7 +25,7 @@ describe('ipgeo unit test', () => {
   });
 
   it('returns the response data', async () => {
-    const mockResponse = { body: { weatherData: "Weather Data" } };
+    const mockResponse = { body: { ipData: "IP Address Data" } };
     needle.mockResolvedValue(mockResponse);
 
     const data = await ipgeo();
