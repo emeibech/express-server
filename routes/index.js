@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/api/ip', async (req, res) => {
+router.get('/api/ip', cache('5 minutes'), async (req, res) => {
   try {
     const data = await ipgeo();
 
@@ -31,7 +31,7 @@ router.get('/api/ip', async (req, res) => {
   }
 });
 
-router.get('/api/weather', async (req, res) => {
+router.get('/api/weather', cache('5 minutes'), async (req, res) => {
   try {
     const weatherData = await weather(req);
     res.json(weatherData);
