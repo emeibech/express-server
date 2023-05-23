@@ -35,7 +35,9 @@ describe('weather unit test', () => {
       'get',
       expect.stringMatching(
         new RegExp(
-          `^${process.env.API_OW_WEATHER_URL}\\?${mockReq.url.slice(13)}&${process.env.API_OW_KEY_NAME}=${process.env.API_OW_KEY_VALUE}$`
+          `^${process.env.API_OW_WEATHER_URL}\\?${mockReq.url.slice(13)}&${
+            process.env.API_OW_KEY_NAME
+          }=${process.env.API_OW_KEY_VALUE}$`
         )
       )
     );

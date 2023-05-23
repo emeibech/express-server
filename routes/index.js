@@ -10,7 +10,7 @@ let cache = apiCache.middleware;
 router.get('/', (req, res) => {
   try {
     res.json({
-      serverStatus: "Active",
+      serverStatus: 'Active',
     });
   } catch (error) {
     res.status(500).json({ error });
@@ -26,7 +26,7 @@ router.get('/api/ip', cache('5 minutes'), async (req, res) => {
     console.error(error);
 
     res.status(500).json({
-      error: "An error occurred while fetching geolocation data",
+      error: 'An error occurred while fetching geolocation data',
     });
   }
 });
@@ -39,9 +39,9 @@ router.get('/api/weather', cache('5 minutes'), async (req, res) => {
     console.error(error);
 
     res.status(500).json({
-      error: "An error occurred while fetching weather data",
+      error: 'An error occurred while fetching weather data',
     });
   }
-})
+});
 
 module.exports = router;

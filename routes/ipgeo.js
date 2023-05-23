@@ -8,16 +8,16 @@ const keyValue = process.env.API_IPGEO_KEY_VALUE;
 const ipgeo = async () => {
   try {
     const params = new URLSearchParams({
-      [keyName]: keyValue
+      [keyName]: keyValue,
     });
 
-    const apiRes = await needle('get',`${ipgeoURL}?${params}`);
+    const apiRes = await needle('get', `${ipgeoURL}?${params}`);
     const data = apiRes.body;
 
     return data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 module.exports = ipgeo;
