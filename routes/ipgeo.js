@@ -5,10 +5,11 @@ const ipgeoURL = process.env.API_IPGEO_URL;
 const keyName = process.env.API_IPGEO_KEY_NAME;
 const keyValue = process.env.API_IPGEO_KEY_VALUE;
 
-const ipgeo = async () => {
+const ipgeo = async (req) => {
   try {
     const params = new URLSearchParams({
       [keyName]: keyValue,
+      ip: req.header('X-Real-IP'),
     });
 
     const apiRes = await needle('get', `${ipgeoURL}?${params}`);
