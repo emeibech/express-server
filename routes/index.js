@@ -17,14 +17,23 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/api/ip', cache('5 minutes'), async (req, res) => {
+router.get('/api/ip', cache('5 minutes'), (req, res) => {
   try {
-    const data = await ipgeo();
+    res.json({ ip: req.header('X-Real-IP') });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: 'An error occurred while fetching geolocation data',
+    });
+  }
+});
 
+router.get('/api/ipgeo', cache('5 minutes'), async (req, res) => {
+  try {
+    const data = await ipgeo(req);
     res.json(data);
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       error: 'An error occurred while fetching geolocation data',
     });
@@ -37,7 +46,6 @@ router.get('/api/weather', cache('5 minutes'), async (req, res) => {
     res.json(weatherData);
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       error: 'An error occurred while fetching weather data',
     });
