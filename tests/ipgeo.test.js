@@ -13,7 +13,11 @@ describe('ipgeo unit test', () => {
     const mockResponse = { body: { ipData: 'IP Address Data' } };
     needle.mockResolvedValue(mockResponse);
 
-    await ipgeo();
+    const mockReq = {
+      header: (param) => param === 'X-Real-IP' ? 'realIP' : undefined,
+    }
+
+    await ipgeo(mockReq);
 
     expect(needle).toHaveBeenCalledTimes(1);
     expect(needle).toHaveBeenCalledWith(
@@ -28,7 +32,11 @@ describe('ipgeo unit test', () => {
     const mockResponse = { body: { ipData: 'IP Address Data' } };
     needle.mockResolvedValue(mockResponse);
 
-    const data = await ipgeo();
+    const mockReq = {
+      header: (param) => (param === 'X-Real-IP') ? 'realIP' : undefined,
+    }
+
+    const data = await ipgeo(mockReq);
 
     expect(data).toEqual(mockResponse.body);
   });
@@ -38,7 +46,11 @@ describe('ipgeo unit test', () => {
     needle.mockRejectedValue(mockError);
     console.error = jest.fn();
 
-    await ipgeo();
+    const mockReq = {
+      header: (param) => param === 'X-Real-IP' ? 'realIP' : undefined,
+    }
+
+    await ipgeo(mockReq);
 
     expect(console.error).toHaveBeenCalledWith(mockError);
   });
