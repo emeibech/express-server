@@ -11,13 +11,16 @@ router.get('/', (req, res) => {
   try {
     res.json({
       serverStatus: 'Active',
+      ip: 'emeibechserver.com/ip',
+      ipInfo: 'emeibechserver.com/ipgeo',
+      weather: 'emeibechserver.com/weather?q={city name}',
     });
   } catch (error) {
     res.status(500).json({ error });
   }
 });
 
-router.get('/api/ip', cache('5 minutes'), (req, res) => {
+router.get('/ip', cache('5 minutes'), (req, res) => {
   try {
     res.json({ ip: req.header('X-Real-IP') });
   } catch (error) {
@@ -28,7 +31,7 @@ router.get('/api/ip', cache('5 minutes'), (req, res) => {
   }
 });
 
-router.get('/api/ipgeo', cache('5 minutes'), async (req, res) => {
+router.get('/ipgeo', cache('5 minutes'), async (req, res) => {
   try {
     const data = await ipgeo(req);
     res.json(data);
@@ -40,7 +43,7 @@ router.get('/api/ipgeo', cache('5 minutes'), async (req, res) => {
   }
 });
 
-router.get('/api/weather', cache('5 minutes'), async (req, res) => {
+router.get('/weather', cache('5 minutes'), async (req, res) => {
   try {
     const weatherData = await weather(req);
     res.json(weatherData);
