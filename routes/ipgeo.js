@@ -14,9 +14,11 @@ const ipgeo = async (req) => {
 
     const ipgeoData = await needle('get', `${ipgeoURL}?${params}`);
 
-    if (ipgeoData.statusCode !== 200) return {
-      error: `${ipgeoData.statusCode} ${ipgeoData.statusMessage}`,
-    };
+    if (ipgeoData.statusCode !== 200) {
+      return {
+        error: `${ipgeoData.statusCode} ${ipgeoData.statusMessage}`,
+      };
+    }
 
     const data = ipgeoData.body;
 

@@ -1,5 +1,5 @@
-const ipgeo = require('../routes/ipgeo');
 const needle = require('needle');
+const ipgeo = require('../routes/ipgeo');
 require('dotenv').config();
 
 jest.mock('needle');
@@ -35,7 +35,7 @@ describe('ipgeo unit test', () => {
     const data = await ipgeo(mockReq);
 
     expect(data).toEqual({
-      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`
+      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`,
     });
   });
 

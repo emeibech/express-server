@@ -1,12 +1,13 @@
 const express = require('express');
+const apiCache = require('apicache');
 const ipgeo = require('./ipgeo');
 const weather = require('./weather');
 const weatherOC = require('./weatherOC');
-const apiCache = require('apicache');
+
 const router = express.Router();
 
 // Initialize cache
-let cache = apiCache.middleware;
+const cache = apiCache.middleware;
 
 router.get('/', (req, res) => {
   try {

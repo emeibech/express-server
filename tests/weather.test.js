@@ -1,5 +1,5 @@
-const weather = require('../routes/weather');
 const needle = require('needle');
+const weather = require('../routes/weather');
 require('dotenv').config();
 
 jest.mock('needle');

@@ -15,9 +15,11 @@ const weatherOC = async (req) => {
 
     const oneCallData = await needle('get', `${oneCallUrl}?${oneCallParams}`);
 
-    if (oneCallData.statusCode !== 200) return {
-      error: `${oneCallData.statusCode} ${oneCallData.statusMessage}`,
-    };
+    if (oneCallData.statusCode !== 200) {
+      return {
+        error: `${oneCallData.statusCode} ${oneCallData.statusMessage}`,
+      };
+    }
 
     return oneCallData.body;
   } catch (error) {

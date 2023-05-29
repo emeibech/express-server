@@ -1,5 +1,5 @@
-const weatherOC = require('../routes/weatherOC'); 
 const needle = require('needle');
+const weatherOC = require('../routes/weatherOC');
 
 // Mock needle for testing purposes
 jest.mock('needle');
@@ -11,7 +11,7 @@ describe('weatherOC unit test', () => {
   const mockRequest = {
     headers: { host: 'localhost:3000' },
     url: 'onecall?lat=35.6895&lon=139.6917',
-  }
+  };
 
   it('returns the response data on status 200', async () => {
     // Status is 200 to mock successful request
@@ -39,13 +39,13 @@ describe('weatherOC unit test', () => {
     const data = await weatherOC(mockRequest);
     // Data should be equal to mockResponse.body
     expect(data).toEqual({
-      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`
+      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`,
     });
   });
 
   it('logs the error caught in catch block', async () => {
     // Mock the error
-    const mockError = { error: '408 Request Timeout'}
+    const mockError = { error: '408 Request Timeout' };
     // Set needle's rejected value to mockError
     needle.mockRejectedValue(mockError);
 
