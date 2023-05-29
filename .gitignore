@@ -5,6 +5,6 @@ node_modules
 .env
 
 # .rest file for testing api
-get_ip.rest
 get_weather.rest
 get_server.rest
+get_onecall.rest
