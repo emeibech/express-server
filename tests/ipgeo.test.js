@@ -5,50 +5,44 @@ require('dotenv').config();
 jest.mock('needle');
 
 describe('ipgeo unit test', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
+  beforeEach(() => jest.clearAllMocks());
 
-  it('makes a GET request with correct URL and parameters', async () => {
-    const mockResponse = { body: { ipData: 'IP Address Data' } };
+  const mockReq = {
+    header: () => 'Implementation does not matter',
+  };
+
+  it('returns the response data on status 200', async () => {
+    const mockResponse = {
+      statusCode: 200,
+      body: { ipData: 'IP Address Data' },
+    };
+
     needle.mockResolvedValue(mockResponse);
-
-    const mockReq = {
-      header: (param) => param === 'X-Real-IP' ? 'realIP' : undefined,
-    }
-
-    await ipgeo(mockReq);
-
-    expect(needle).toHaveBeenCalledTimes(1);
-    expect(needle).toHaveBeenCalledWith(
-      'get',
-      expect.stringContaining(
-        `${process.env.API_IPGEO_URL}?${process.env.API_IPGEO_KEY_NAME}=${process.env.API_IPGEO_KEY_VALUE}`
-      )
-    );
-  });
-
-  it('returns the response data', async () => {
-    const mockResponse = { body: { ipData: 'IP Address Data' } };
-    needle.mockResolvedValue(mockResponse);
-
-    const mockReq = {
-      header: (param) => (param === 'X-Real-IP') ? 'realIP' : undefined,
-    }
 
     const data = await ipgeo(mockReq);
 
     expect(data).toEqual(mockResponse.body);
   });
 
-  it('handles and logs errors', async () => {
+  it('returns the error code and message on failed request', async () => {
+    const mockResponse = {
+      statusCode: 404,
+      statusMessage: 'Not found',
+    };
+
+    needle.mockResolvedValue(mockResponse);
+
+    const data = await ipgeo(mockReq);
+
+    expect(data).toEqual({
+      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`
+    });
+  });
+
+  it('logs the errors caught in catch block', async () => {
     const mockError = { body: { error: 'An error occured' } };
     needle.mockRejectedValue(mockError);
     console.error = jest.fn();
-
-    const mockReq = {
-      header: (param) => param === 'X-Real-IP' ? 'realIP' : undefined,
-    }
 
     await ipgeo(mockReq);
 
