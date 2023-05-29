@@ -12,8 +12,13 @@ const ipgeo = async (req) => {
       ip: req.header('X-Real-IP'),
     });
 
-    const apiRes = await needle('get', `${ipgeoURL}?${params}`);
-    const data = apiRes.body;
+    const ipgeoData = await needle('get', `${ipgeoURL}?${params}`);
+
+    if (ipgeoData.statusCode !== 200) return {
+      error: `${ipgeoData.statusCode} ${ipgeoData.statusMessage}`,
+    };
+
+    const data = ipgeoData.body;
 
     return data;
   } catch (error) {

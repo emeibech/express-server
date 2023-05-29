@@ -1,5 +1,4 @@
 const needle = require('needle');
-const ipgeo = require('./ipgeo');
 require('dotenv').config();
 
 const weatherUrl = process.env.API_OW_WEATHER_URL;
@@ -15,6 +14,11 @@ const weather = async (req) => {
     weatherParams.append(keyName, keyValue);
 
     const weatherData = await needle('get', `${weatherUrl}?${weatherParams}`);
+    
+    if (weatherData.statusCode !== 200) return {
+      error: `${weatherData.statusCode} ${weatherData.statusMessage}`,
+    };
+    
     const lat = weatherData.body.coord.lat;
     const lon = weatherData.body.coord.lon;
 
@@ -26,6 +30,10 @@ const weather = async (req) => {
     });
 
     const forecastData = await needle('get', `${oneCallUrl}?${forecastParams}`);
+
+    if (forecastData.statusCode !== 200) return {
+      error: `${forecastData.statusCode} ${forecastData.statusMessage}`,
+    };
 
     const data = {
       weatherData: weatherData.body,
