@@ -1,6 +1,7 @@
 const express = require('express');
 const ipgeo = require('./ipgeo');
 const weather = require('./weather');
+const weatherOC = require('./weatherOC');
 const apiCache = require('apicache');
 const router = express.Router();
 
@@ -11,23 +12,10 @@ router.get('/', (req, res) => {
   try {
     res.json({
       serverStatus: 'Active',
-      ip: 'emeibechserver.com/ip',
-      ipInfo: 'emeibechserver.com/ipgeo',
-      weather: 'emeibechserver.com/weather?q={city name}',
+      yourIP: req.header('X-Real-IP'),
     });
   } catch (error) {
     res.status(500).json({ error });
-  }
-});
-
-router.get('/ip', cache('5 minutes'), (req, res) => {
-  try {
-    res.json({ ip: req.header('X-Real-IP') });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: 'An error occurred while fetching geolocation data',
-    });
   }
 });
 
@@ -38,7 +26,7 @@ router.get('/ipgeo', cache('5 minutes'), async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      error: 'An error occurred while fetching geolocation data',
+      error: '500: An error occurred while fetching geolocation data',
     });
   }
 });
@@ -50,7 +38,19 @@ router.get('/weather', cache('5 minutes'), async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      error: 'An error occurred while fetching weather data',
+      error: '500: An error occurred while fetching weather data',
+    });
+  }
+});
+
+router.get('/onecall', cache('5 minutes'), async (req, res) => {
+  try {
+    const weatherData = await weatherOC(req);
+    res.json(weatherData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching weather data',
     });
   }
 });
