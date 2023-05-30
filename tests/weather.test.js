@@ -16,10 +16,8 @@ describe('weather unit test', () => {
     const mockResponse = {
       statusCode: 200,
       body: {
-        coord: {
-          lat: 14.6042,
-          lon: 120.9822,
-        },
+        coord: { lat: 14.6042, lon: 120.9822},
+        hourly: [ 0, { pop: 1 } ],
       },
     };
 
@@ -28,8 +26,8 @@ describe('weather unit test', () => {
     const data = await weather(mockRequest);
 
     expect(data).toEqual({
-      forecastData: mockResponse.body,
-      weatherData: mockResponse.body,
+      ...mockResponse.body,
+      hourly: mockResponse.body.hourly[1].pop,
     });
   });
 
