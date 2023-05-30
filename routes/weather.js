@@ -14,30 +14,33 @@ const weather = async (req) => {
     weatherParams.append(keyName, keyValue);
 
     const weatherData = await needle('get', `${weatherUrl}?${weatherParams}`);
-    
-    if (weatherData.statusCode !== 200) return {
-      error: `${weatherData.statusCode} ${weatherData.statusMessage}`,
-    };
-    
-    const lat = weatherData.body.coord.lat;
-    const lon = weatherData.body.coord.lon;
+
+    if (weatherData.statusCode !== 200) {
+      return {
+        error: `${weatherData.statusCode} ${weatherData.statusMessage}`,
+      };
+    }
+
+    const { lat, lon } = weatherData.body.coord;
 
     const forecastParams = new URLSearchParams({
       [keyName]: keyValue,
-      exclude: 'current,minutely,hourly,alerts',
+      exclude: 'minutely',
       lat,
       lon,
     });
 
     const forecastData = await needle('get', `${oneCallUrl}?${forecastParams}`);
 
-    if (forecastData.statusCode !== 200) return {
-      error: `${forecastData.statusCode} ${forecastData.statusMessage}`,
-    };
+    if (forecastData.statusCode !== 200) {
+      return {
+        error: `${forecastData.statusCode} ${forecastData.statusMessage}`,
+      };
+    }
 
     const data = {
-      weatherData: weatherData.body,
-      forecastData: forecastData.body,
+      ...forecastData.body,
+      hourly: forecastData.body.hourly[1].pop,
     };
 
     return data;
