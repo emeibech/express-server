@@ -17,14 +17,20 @@ describe('weatherOC unit test', () => {
     // Status is 200 to mock successful request
     const mockResponse = {
       statusCode: 200,
-      body: { forecast: 'Forecast Data' },
+      body: { 
+        forecast: 'Forecast Data',
+        hourly: [ 0, { pop: '1'} ],
+      },
     };
     // Mock needle's resolved value with mockResponse
     needle.mockResolvedValue(mockResponse);
 
     const data = await weatherOC(mockRequest);
     // Data should be equal to mockResponse.body
-    expect(data).toEqual(mockResponse.body);
+    expect(data).toEqual({
+      ...mockResponse.body,
+      hourly: { pop: mockResponse.body.hourly[1].pop }
+    });
   });
 
   it('returns the error code and message on failed request', async () => {

@@ -10,7 +10,7 @@ const weatherOC = async (req) => {
     const oneCallParams = new URL(req.url, `http://${req.headers.host}`)
       .searchParams;
 
-    oneCallParams.append('exclude', 'minutely,hourly,alerts');
+    oneCallParams.append('exclude', 'minutely,alerts');
     oneCallParams.append(keyName, keyValue);
 
     const oneCallData = await needle('get', `${oneCallUrl}?${oneCallParams}`);
@@ -21,7 +21,10 @@ const weatherOC = async (req) => {
       };
     }
 
-    return oneCallData.body;
+    return {
+      ...oneCallData.body,
+      hourly: { pop: oneCallData.body.hourly[1].pop },
+    };
   } catch (error) {
     console.error(error);
   }
