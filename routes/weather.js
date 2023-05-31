@@ -22,6 +22,7 @@ const weather = async (req) => {
     }
 
     const { lat, lon } = weatherData.body.coord;
+    const { country } = weatherData.body.sys;
 
     const forecastParams = new URLSearchParams({
       [keyName]: keyValue,
@@ -40,7 +41,8 @@ const weather = async (req) => {
 
     const data = {
       ...forecastData.body,
-      hourly: forecastData.body.hourly[1].pop,
+      hourly: { pop: forecastData.body.hourly[1].pop },
+      sys: { country },
     };
 
     return data;

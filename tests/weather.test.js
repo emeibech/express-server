@@ -18,6 +18,7 @@ describe('weather unit test', () => {
       body: {
         coord: { lat: 14.6042, lon: 120.9822},
         hourly: [ 0, { pop: 1 } ],
+        sys: { country: 'PH' },
       },
     };
 
@@ -27,7 +28,8 @@ describe('weather unit test', () => {
 
     expect(data).toEqual({
       ...mockResponse.body,
-      hourly: mockResponse.body.hourly[1].pop,
+      hourly: { pop: mockResponse.body.hourly[1].pop},
+      sys: { country: mockResponse.body.sys.country },
     });
   });
 
