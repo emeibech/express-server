@@ -35,8 +35,10 @@ describe('weather unit test', () => {
 
   it('returns the error code and message on failed request', async () => {
     const mockResponse = {
-      statusCode: 404,
-      statusMessage: 'Not Found',
+      body: {
+        cod: 404,
+        message: 'Not Found',
+      }
     };
 
     needle.mockResolvedValue(mockResponse);
@@ -44,7 +46,7 @@ describe('weather unit test', () => {
     const data = await weather(mockRequest);
 
     expect(data).toEqual({
-      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`,
+      error: `${mockResponse.body.cod} ${mockResponse.body.message}`,
     });
   });
 
