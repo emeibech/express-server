@@ -14,10 +14,10 @@ const weather = async (req) => {
     weatherParams.append(keyName, keyValue);
 
     const weatherData = await needle('get', `${weatherUrl}?${weatherParams}`);
-
-    if (weatherData.statusCode !== 200) {
+    console.log(weatherData);
+    if (weatherData.body.cod !== 200) {
       return {
-        error: `${weatherData.statusCode} ${weatherData.statusMessage}`,
+        error: `${weatherData.body.cod} ${weatherData.body.message}`,
       };
     }
 
@@ -33,9 +33,9 @@ const weather = async (req) => {
 
     const forecastData = await needle('get', `${oneCallUrl}?${forecastParams}`);
 
-    if (forecastData.statusCode !== 200) {
+    if (forecastData.body.cod !== 200) {
       return {
-        error: `${forecastData.statusCode} ${forecastData.statusMessage}`,
+        error: `${forecastData.body.cod} ${forecastData.body.message}`,
       };
     }
 
