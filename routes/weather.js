@@ -17,7 +17,7 @@ const weather = async (req) => {
 
     if (weatherData.statusCode !== 200) {
       return {
-        error: `${weatherData.body.cod} ${weatherData.body.message}`,
+        error: `${weatherData.body.cod}: ${weatherData.body.message}`,
       };
     }
 
@@ -35,7 +35,7 @@ const weather = async (req) => {
 
     if (forecastData.statusCode !== 200) {
       return {
-        error: `${forecastData.body.cod} ${forecastData.body.message}`,
+        error: `${forecastData.body.cod}: ${forecastData.body.message}`,
       };
     }
 

@@ -16,7 +16,7 @@ const ipgeo = async (req) => {
 
     if (ipgeoData.statusCode !== 200) {
       return {
-        error: `${ipgeoData.statusCode} ${ipgeoData.statusMessage}`,
+        error: `${ipgeoData.statusCode}: ${ipgeoData.statusMessage}`,
       };
     }
 

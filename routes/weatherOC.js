@@ -17,7 +17,7 @@ const weatherOC = async (req) => {
 
     if (oneCallData.statusCode !== 200) {
       return {
-        error: `${oneCallData.body.cod} ${oneCallData.body.message}`,
+        error: `${oneCallData.body.cod}: ${oneCallData.body.message}`,
       };
     }
 
