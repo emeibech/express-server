@@ -9,17 +9,16 @@ const app = express();
 
 // Rate limit
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  max: 100,
+  windowMs: 60 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Rate limit exceeded. Try again in an hour.' },
 });
 
-app.use(limiter);
 app.set('trust proxy', 1);
-
-// CORS middleware
 app.use(cors());
-
-// Routes
+app.use(limiter);
 app.use('/', index);
 
 // Error handling middleware
