@@ -1,13 +1,12 @@
 const express = require('express');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const apiCache = require('apicache');
 const ipgeo = require('./ipgeo');
 const weather = require('./weather');
 const weatherOC = require('./weatherOC');
 
 const router = express.Router();
-
-// Initialize cache
-const cache = apiCache.middleware;
 
 router.get('/', (req, res) => {
   try {
@@ -19,6 +18,30 @@ router.get('/', (req, res) => {
     res.status(500).json({ error });
   }
 });
+
+const whitelist = ['https://weatheremeibech.netlify.app'];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+const limiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Rate limit exceeded. Try again in an hour.' },
+});
+
+router.use(cors(corsOptions));
+router.use(limiter);
+
+const cache = apiCache.middleware;
 
 router.get('/ipgeo', cache('5 minutes'), async (req, res) => {
   try {
