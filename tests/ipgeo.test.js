@@ -35,7 +35,7 @@ describe('ipgeo unit test', () => {
     const data = await ipgeo(mockReq);
 
     expect(data).toEqual({
-      error: `${mockResponse.statusCode} ${mockResponse.statusMessage}`,
+      error: `${mockResponse.statusCode}: ${mockResponse.statusMessage}`,
     });
   });
 

@@ -46,7 +46,7 @@ describe('weather unit test', () => {
     const data = await weather(mockRequest);
 
     expect(data).toEqual({
-      error: `${mockResponse.body.cod} ${mockResponse.body.message}`,
+      error: `${mockResponse.body.cod}: ${mockResponse.body.message}`,
     });
   });
 

@@ -47,7 +47,7 @@ describe('weatherOC unit test', () => {
     const data = await weatherOC(mockRequest);
     // Data should be equal to mockResponse.body
     expect(data).toEqual({
-      error: `${mockResponse.body.cod} ${mockResponse.body.message}`,
+      error: `${mockResponse.body.cod}: ${mockResponse.body.message}`,
     });
   });
 
