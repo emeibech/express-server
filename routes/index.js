@@ -1,12 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const apiCache = require('apicache');
-const ipgeo = require('./ipgeo');
-const weather = require('./weather');
-const weatherOC = require('./weatherOC');
+import { Router } from 'express';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import apicache from 'apicache';
+import ipgeo from './openweather/ipgeo.js';
+import weather from './openweather/weather.js';
+import weatherOC from './openweather/weatherOC.js';
+import toneChanger from './openai/toneChanger.js';
 
-const router = express.Router();
+const router = Router();
+const { middleware } = apicache;
 
 router.get('/', (req, res) => {
   try {
@@ -19,16 +21,16 @@ router.get('/', (req, res) => {
   }
 });
 
-const whitelist = ['https://weatheremeibech.netlify.app'];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
+// const whitelist = ['https://weatheremeibech.netlify.app'];
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+// };
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -38,10 +40,11 @@ const limiter = rateLimit({
   message: { error: 'Rate limit exceeded. Try again in an hour.' },
 });
 
-router.use(cors(corsOptions));
+router.use(cors());
+// router.use(cors(corsOptions));
 router.use(limiter);
 
-const cache = apiCache.middleware;
+const cache = middleware;
 
 router.get('/ipgeo', cache('5 minutes'), async (req, res) => {
   try {
@@ -79,4 +82,16 @@ router.get('/onecall', cache('5 minutes'), async (req, res) => {
   }
 });
 
-module.exports = router;
+router.get('/tonechanger', async (req, res) => {
+  try {
+    const completionData = await toneChanger();
+    res.json(completionData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
+
+export default router;
