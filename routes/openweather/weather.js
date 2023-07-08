@@ -1,5 +1,7 @@
-const needle = require('needle');
-require('dotenv').config();
+import needle from 'needle';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const weatherUrl = process.env.API_OW_WEATHER_URL;
 const oneCallUrl = process.env.API_OW_ONECALL_URL;
@@ -51,4 +53,4 @@ const weather = async (req) => {
   }
 };
 
-module.exports = weather;
+export default weather;

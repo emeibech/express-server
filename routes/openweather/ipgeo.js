@@ -1,5 +1,7 @@
-const needle = require('needle');
-require('dotenv').config();
+import needle from 'needle';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const ipgeoURL = process.env.API_IPGEO_URL;
 const keyName = process.env.API_IPGEO_KEY_NAME;
@@ -28,4 +30,4 @@ const ipgeo = async (req) => {
   }
 };
 
-module.exports = ipgeo;
+export default ipgeo;
