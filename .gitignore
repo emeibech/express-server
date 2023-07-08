@@ -5,10 +5,14 @@ node_modules
 .env
 
 # Config files
-.eslintrc.js
+.eslintrc.json
 .eslintignore
 
 # .rest file for testing api
 get_weather.rest
 get_server.rest
 get_onecall.rest
+get_tonechanger.rest
+
+# misc
+playground.js
