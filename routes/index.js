@@ -84,7 +84,7 @@ router.get('/onecall', cache('5 minutes'), async (req, res) => {
 
 router.get('/tonechanger', async (req, res) => {
   try {
-    const completionData = await toneChanger();
+    const completionData = await toneChanger(req);
     res.json(completionData);
   } catch (error) {
     console.error(error);
