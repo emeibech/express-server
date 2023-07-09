@@ -2,26 +2,27 @@ import openai from './openaiConfig.js';
 
 const toneChanger = async (req) => {
   try {
-    console.log(req.query.readability);
+    console.log(req.query.tone);
     const completion = await openai.createChatCompletion(
       {
         model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
-            content: `Your task is to modify the tone and language of the text you will receive so that it sounds ${req.query.tone}. Use very simple language.`,
+            content: 'You will receive two sets of text, one wrapped in <message> tag and the other with <tone> tag. Rewrite the text inside <message> tag in a tone or manner indicated in the <tone> tag. Do not make any reference on the value inside <tone>.',
           },
           {
             role: 'user',
-            content: 'People fill their cart or bags casually, no masks, then just walk out like nothing\'s up. Is this a recent thing (and in which case what\'s driving it) or has it always been happening but it\'s getting more attention in social media?.',
+            content: `<message>${req.query.message}</message><tone>${req.query.tone}</tone>`,
           },
         ],
-        temperature: 0.5,
+        temperature: 0.6,
       },
-      { timeout: 10000 },
+      { timeout: 15000 },
     );
 
-    console.log(completion.data);
+    // console.log(completion.data);
+    // console.log(completion.data.choices[0].message.content);
     return completion.data.choices[0].message.content;
   } catch (error) {
     if (error.response) {
