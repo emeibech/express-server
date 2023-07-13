@@ -6,6 +6,11 @@ import ipgeo from './openweather/ipgeo.js';
 import weather from './openweather/weather.js';
 import weatherOC from './openweather/weatherOC.js';
 import toneChanger from './openai/toneChanger.js';
+import codeAnalyzer from './openai/codeAnalyzer.js';
+import codingAssistant from './openai/codingAssistant.js';
+import loreGenerator from './openai/loreGenerator.js';
+import eli5 from './openai/eli5.js';
+import generalAssistant from './openai/generalAssistant.js';
 
 const router = Router();
 const { middleware } = apicache;
@@ -85,6 +90,66 @@ router.get('/onecall', cache('5 minutes'), async (req, res) => {
 router.get('/tonechanger', async (req, res) => {
   try {
     const completionData = await toneChanger(req);
+    res.json(completionData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
+
+router.get('/codeanalyzer', async (req, res) => {
+  try {
+    const completionData = await codeAnalyzer(req);
+    res.json(completionData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
+
+router.get('/codingassistant', async (req, res) => {
+  try {
+    const completionData = await codingAssistant(req);
+    res.json(completionData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
+
+router.get('/loregenerator', async (req, res) => {
+  try {
+    const completionData = await loreGenerator(req);
+    res.json(completionData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
+
+router.get('/eli5', async (req, res) => {
+  try {
+    const completionData = await eli5(req);
+    res.json(completionData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
+
+router.get('/generalassistant', async (req, res) => {
+  try {
+    const completionData = await generalAssistant(req);
     res.json(completionData);
   } catch (error) {
     console.error(error);
