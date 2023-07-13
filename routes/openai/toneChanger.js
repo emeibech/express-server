@@ -1,41 +1,11 @@
-import openai from './openaiConfig.js';
+import completionSansHistory from './completionSansHistory.js';
 
-const toneChanger = async (req) => {
-  try {
-    console.log(req.query.tone);
-    const completion = await openai.createChatCompletion(
-      {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You will receive two sets of text, one wrapped in <message> tag and the other with <tone> tag. Rewrite the text inside <message> tag in a tone or manner indicated in the <tone> tag. Do not make any reference on the value inside <tone>.',
-          },
-          {
-            role: 'user',
-            content: `<message>${req.query.message}</message><tone>${req.query.tone}</tone>`,
-          },
-        ],
-        temperature: 0.6,
-      },
-      { timeout: 15000 },
-    );
-
-    // console.log(completion.data);
-    // console.log(completion.data.choices[0].message.content);
-    return completion.data.choices[0].message.content;
-  } catch (error) {
-    if (error.response) {
-      return {
-        error: {
-          status: error.response.status,
-          message: error.response.data.error.message,
-        },
-      };
-    }
-
-    return { error: error.message };
-  }
-};
+const toneChanger = async (req) => completionSansHistory({
+  req,
+  sysContent: 'You are a language assistant. You will receive two sets of text, one labeled tone and the other message. The value of tone(label) can be a particular tone, e.g., sarcastic, or a particular type of person, e.g., medieval knight. Your task is to transform the message so that it is written in a particular tone, or as if it was written by a particular type of person. Important note: Be subtle with your response. Do not include what tone you are supposed to be written in or what type of person is the supposed writer.',
+  userContent: `tone:"${req.query.tone}" message:"${req.query.message}"`,
+  temperature: 0.3,
+  timeout: 15000,
+});
 
 export default toneChanger;
