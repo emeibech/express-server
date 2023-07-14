@@ -6,13 +6,16 @@ const history = ChatHistory('You are a programming assistant. You will receive p
 const codingAssistant = async (req) => {
   if (req.query.reset) history.resetHistory();
 
-  return completionWithHistory({
+  const completion = await completionWithHistory({
     history: history.getHistory(),
     userContent: req.query.prompt,
     temperature: 0.2,
-    timeout: 20000,
     addEntry: history.addEntry,
   });
+
+  if (history.getTokenEstimate() > 3000) history.summarizeHistory();
+
+  return completion;
 };
 
 export default codingAssistant;

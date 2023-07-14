@@ -13,7 +13,7 @@ const generalAssistant = async (req) => {
     addEntry: history.addEntry,
   });
 
-  if (history.getTokenEstimate() > 2000) history.summarizeHistory();
+  if (history.getTokenEstimate() > 3000) history.summarizeHistory();
 
   return completion;
 };
