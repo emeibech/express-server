@@ -6,13 +6,16 @@ const history = ChatHistory('You are a lore generator. Your task is to generate 
 const loreGenerator = async (req) => {
   if (req.query.reset) history.resetHistory();
 
-  return completionWithHistory({
+  const completion = await completionWithHistory({
     history: history.getHistory(),
     userContent: req.query.prompt,
     temperature: Number(req.query.temperature),
-    timeout: 20000,
     addEntry: history.addEntry,
   });
+
+  if (history.getTokenEstimate() > 3000) history.summarizeHistory();
+
+  return completion;
 };
 
 export default loreGenerator;

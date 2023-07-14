@@ -6,13 +6,16 @@ const history = ChatHistory('You are an ELI5(Explain Like I\'m Five) Master. You
 const eli5 = async (req) => {
   if (req.query.reset) history.resetHistory();
 
-  return completionWithHistory({
+  const completion = await completionWithHistory({
     history: history.getHistory(),
     userContent: req.query.prompt,
     temperature: 0.3,
-    timeout: 15000,
     addEntry: history.addEntry,
   });
+
+  if (history.getTokenEstimate() > 3000) history.summarizeHistory();
+
+  return completion;
 };
 
 export default eli5;
