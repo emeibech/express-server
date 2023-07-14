@@ -4,7 +4,6 @@ const completionWithHistory = async ({
   history,
   userContent,
   temperature,
-  timeout,
   addEntry,
 }) => {
   const messages = [
@@ -22,7 +21,6 @@ const completionWithHistory = async ({
         messages,
         temperature,
       },
-      { timeout },
     );
 
     addEntry(

@@ -1,11 +1,9 @@
 import openai from './openaiConfig.js';
 
 const completionSansHistory = async ({
-  req,
   sysContent,
   userContent,
   temperature,
-  timeout,
 }) => {
   try {
     const completion = await openai.createChatCompletion(
@@ -23,14 +21,10 @@ const completionSansHistory = async ({
         ],
         temperature,
       },
-      { timeout },
     );
 
     console.log(
-      {
-        ...req.query,
-        data: completion.data,
-      },
+      { data: completion.data },
       completion.data.choices[0].message.content,
     );
 
