@@ -36,8 +36,6 @@ const ChatHistory = (sysContent) => {
   };
 
   const summarizeHistory = async () => {
-    const prevContent = history[0].content;
-
     try {
       const formattedHistory = history.map(
         (entry) => `{role: ${entry.role}, content: ${entry.content}}`,
@@ -53,7 +51,6 @@ const ChatHistory = (sysContent) => {
       editSysContent(summary);
     } catch (error) {
       console.error(error);
-      editSysContent(prevContent);
     }
   };
 
