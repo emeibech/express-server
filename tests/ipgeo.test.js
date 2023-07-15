@@ -1,11 +1,13 @@
-const needle = require('needle');
-const ipgeo = require('../routes/ipgeo');
-require('dotenv').config();
+import { describe, beforeEach, it, expect, vi } from 'vitest';
+import needle from 'needle';
+import ipgeo from '../routes/openweather/ipgeo.js'
+import dotenv from 'dotenv';
 
-jest.mock('needle');
+dotenv.config();
+vi.mock('needle');
 
 describe('ipgeo unit test', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => vi.clearAllMocks());
 
   const mockReq = {
     header: () => 'Implementation does not matter',
@@ -42,7 +44,7 @@ describe('ipgeo unit test', () => {
   it('logs the errors caught in catch block', async () => {
     const mockError = { body: { error: 'An error occured' } };
     needle.mockRejectedValue(mockError);
-    console.error = jest.fn();
+    console.error = vi.fn();
 
     await ipgeo(mockReq);
 
