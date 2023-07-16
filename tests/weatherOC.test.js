@@ -1,11 +1,13 @@
-const needle = require('needle');
-const weatherOC = require('../routes/weatherOC');
+import { describe, beforeEach, it, expect, vi } from 'vitest';
+import needle from 'needle';
+import weatherOC from '../routes/openweather/weatherOC.js'
+import dotenv from 'dotenv';
 
-// Mock needle for testing purposes
-jest.mock('needle');
+dotenv.config();
+vi.mock('needle');
 
 describe('weatherOC unit test', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => vi.clearAllMocks());
 
   // Mock the neccessary parameters for the request
   const mockRequest = {
@@ -57,7 +59,7 @@ describe('weatherOC unit test', () => {
     // Set needle's rejected value to mockError
     needle.mockRejectedValue(mockError);
 
-    console.error = jest.fn();
+    console.error = vi.fn();
 
     await weatherOC(mockRequest);
     // console.error should execute with the mockError as parameter

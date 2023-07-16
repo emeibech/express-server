@@ -1,11 +1,12 @@
-const needle = require('needle');
-const weather = require('../routes/weather');
-require('dotenv').config();
+import { describe, beforeEach, it, expect, vi } from 'vitest';
+import needle from 'needle';
+import weather from '../routes/openweather/weather.js'
+import dotenv from 'dotenv';
 
-jest.mock('needle');
-
+dotenv.config();
+vi.mock('needle');
 describe('weather unit test', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => vi.resetAllMocks());
 
   const mockRequest = {
     headers: { host: 'localhost:3000' },
@@ -53,7 +54,7 @@ describe('weather unit test', () => {
   it('logs the error caught on catch block', async () => {
     const mockError = { body: { error: 'An error occurred' } };
     needle.mockRejectedValue(mockError);
-    console.error = jest.fn();
+    console.error = vi.fn();
 
     await weather(mockRequest);
 
