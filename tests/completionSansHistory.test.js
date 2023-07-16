@@ -5,7 +5,7 @@ import openai from '../routes/openai/openaiConfig';
 describe('completionSansHistory unit test', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('returns the completed message content', async () => {
+  it('returns the completion message content', async () => {
     const sysContent = 'System message';
     const userContent = 'User message';
     const temperature = 0.5;
