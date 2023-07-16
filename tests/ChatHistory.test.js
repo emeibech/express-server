@@ -1,9 +1,6 @@
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 import ChatHistory from '../routes/openai/ChatHistory.js'
 import completionSansHistory from '../routes/openai/completionSansHistory.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 describe('ChatHistory unit test', () => {
   describe('getHistory method', () => {
