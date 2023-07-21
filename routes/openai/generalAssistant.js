@@ -6,12 +6,13 @@ const history = ChatHistory('You are a helpful assistant.');
 const generalAssistant = async (req) => {
   if (req.query.reset) history.resetHistory();
 
-  const completion = await completionWithHistory({
+  const { completion, entries } = await completionWithHistory({
     history: history.getHistory(),
     userContent: req.query.prompt,
     temperature: 0.5,
-    addEntry: history.addEntry,
   });
+
+  history.addEntry(...entries);
 
   if (history.getTokenEstimate() > 3000) history.summarizeHistory();
 
