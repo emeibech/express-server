@@ -3,7 +3,7 @@ import completionWithHistory from '../routes/openai/completionWithHistory';
 import openai from '../routes/openai/openaiConfig';
 
 describe('completionWithHistory', () => {
-  it('returns the completion message content', async () => {
+  it('returns an obj containing completion and entries props', async () => {
     const history = [
       {
         role: 'assistant',
@@ -16,11 +16,12 @@ describe('completionWithHistory', () => {
     const addEntry = vi.fn();
     openai.createChatCompletion = vi.fn();
 
-    const completionMsg = {
+    const completionMock = {
       data: {
         choices: [
           {
             message: {
+              role: 'assistant',
               content: 'Completed message',
             },
           },
@@ -28,7 +29,18 @@ describe('completionWithHistory', () => {
       },
     };
 
-    openai.createChatCompletion.mockResolvedValue(completionMsg)
+    const completionObj = {
+      completion: completionMock.data.choices[0].message.content,
+      entries: [
+        {
+          role: 'user',
+          content: userContent,
+        },
+        { ...completionMock.data.choices[0].message }
+      ]
+    }
+
+    openai.createChatCompletion.mockResolvedValue(completionMock)
 
     const completion = await completionWithHistory({
       history,
@@ -37,50 +49,7 @@ describe('completionWithHistory', () => {
       addEntry,
     });
 
-    expect(completion).toBe(completionMsg.data.choices[0].message.content);
-  });
-
-  it('calls addEntry with correct parameters', async () => {
-    const history = [
-      {
-        role: 'assistant',
-        content: 'Hello, how can I assist you today?',
-      },
-    ];
-
-    const userContent = 'What is the weather like today?';
-    const temperature = 0.5;
-    const addEntry = vi.fn();
-    openai.createChatCompletion = vi.fn();
-
-    const completionMsg = {
-      data: {
-        choices: [
-          {
-            message: {
-              content: 'Completed message',
-            },
-          },
-        ],
-      },
-    };
-
-    openai.createChatCompletion.mockResolvedValue(completionMsg)
-
-    await completionWithHistory({
-      history,
-      userContent,
-      temperature,
-      addEntry,
-    });
-
-    expect(addEntry).toHaveBeenCalledWith(
-      {
-        role: 'user',
-        content: userContent,
-      },
-      completionMsg.data.choices[0].message,
-    );
+    expect(completion).toEqual(completionObj);
   });
 
   it('returns an error object when an error occurs', async () => {
