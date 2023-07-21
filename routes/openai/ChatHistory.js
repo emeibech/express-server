@@ -37,12 +37,13 @@ const ChatHistory = (sysContent) => {
 
   const summarizeHistory = async () => {
     try {
-      const formattedHistory = history.map(
-        (entry) => `{role: ${entry.role}, content: ${entry.content}}`,
-      );
+      const formattedHistory = history.map((entry, index) => {
+        if (index === 0) return '';
+        return `{role: ${entry.role}, content: ${entry.content}}`;
+      });
 
       const summary = await completionSansHistory({
-        sysContent: 'Summarize conversation history.',
+        sysContent: 'Provide a brief summary of the conversation.',
         userContent: `${formattedHistory}`,
         temperature: 0.3,
       });
