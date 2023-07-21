@@ -1,4 +1,4 @@
-import completionSansHistory from './completionSansHistory.js';
+import completionSansHistory from './utils/completionSansHistory.js';
 
 const codeAnalyzer = async (req) => completionSansHistory({
   req,

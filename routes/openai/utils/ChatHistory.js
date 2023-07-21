@@ -43,7 +43,7 @@ const ChatHistory = (sysContent) => {
       });
 
       const summary = await completionSansHistory({
-        sysContent: 'Provide a brief summary of the conversation.',
+        sysContent: 'Provide a concise (about 300 words) summary of the conversation.',
         userContent: `${formattedHistory}`,
         temperature: 0.3,
       });

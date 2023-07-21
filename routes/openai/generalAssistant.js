@@ -1,5 +1,5 @@
-import ChatHistory from './ChatHistory.js';
-import completionWithHistory from './completionWithHistory.js';
+import ChatHistory from './utils/ChatHistory.js';
+import completionWithHistory from './utils/completionWithHistory.js';
 
 const history = ChatHistory('You are a helpful assistant.');
 

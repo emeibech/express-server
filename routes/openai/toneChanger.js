@@ -1,4 +1,4 @@
-import completionSansHistory from './completionSansHistory.js';
+import completionSansHistory from './utils/completionSansHistory.js';
 
 const toneChanger = async (req) => completionSansHistory({
   req,
