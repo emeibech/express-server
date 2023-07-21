@@ -4,7 +4,6 @@ const completionWithHistory = async ({
   history,
   userContent,
   temperature,
-  addEntry,
 }) => {
   const messages = [
     ...history,
@@ -23,20 +22,21 @@ const completionWithHistory = async ({
       },
     );
 
-    addEntry(
-      {
-        role: 'user',
-        content: userContent,
-      },
-      completion.data.choices[0].message,
-    );
-
     console.log(
       { data: completion.data },
       completion.data.choices[0].message.content,
     );
 
-    return completion.data.choices[0].message.content;
+    return {
+      entries: [
+        {
+          role: 'user',
+          content: userContent,
+        },
+        { ...completion.data.choices[0].message },
+      ],
+      completion: completion.data.choices[0].message.content,
+    };
   } catch (error) {
     if (error.response) {
       return {
