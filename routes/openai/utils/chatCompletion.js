@@ -1,12 +1,13 @@
 import openai from './openaiConfig.js';
 
-const completionSansHistory = async ({
+const chatCompletion = async ({
+  res,
   sysContent,
   userContent,
   temperature,
 }) => {
   try {
-    const completion = await openai.createChatCompletion(
+    const stream = await openai.chat.completions.create(
       {
         model: 'gpt-3.5-turbo',
         messages: [
@@ -20,15 +21,16 @@ const completionSansHistory = async ({
           },
         ],
         temperature,
+        stream: true,
       },
     );
 
-    console.log(
-      { data: completion.data },
-      completion.data.choices[0].message.content,
-    );
+    res.setHeader('Content-Type', 'text/plain');
 
-    return completion.data.choices[0].message.content;
+    for await (const chunk of stream) {
+      const message = chunk.choices[0]?.delta?.content || '';
+      res.write(message);
+    }
   } catch (error) {
     if (error.response) {
       return {
@@ -43,4 +45,4 @@ const completionSansHistory = async ({
   }
 };
 
-export default completionSansHistory;
+export default chatCompletion;
