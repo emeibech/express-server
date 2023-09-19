@@ -1,22 +1,32 @@
-import ChatHistory from './utils/ChatHistory.js';
-import completionWithHistory from './utils/completionWithHistory.js';
+import { Router } from 'express';
+import apicache from 'apicache';
+import { handleCors, handleRateLimit } from '../../utils/middleWares.js';
+import chatCompletion from './utils/chatCompletion.js';
 
-const history = ChatHistory('You are a programming assistant. You will receive programming questions, requests for suggestions or recommendations, or prompts to generate code. When answering questions or making suggestions, be sure to use up-to-date information that follow best practices. When generating code, before sending back your response, you must first check your generated code for errors. Important note: The generated code should prioritize maintainability and readability over performance unless told otherwise in the prompt. Be sure to follow best practices.');
+const codingAssistant = Router();
+const { middleware } = apicache;
+const cache = middleware;
 
-const codingAssistant = async (req) => {
-  if (req.query.reset) history.resetHistory();
+codingAssistant.use(handleCors);
+codingAssistant.use(handleRateLimit({ max: 10, minutes: 1440 }));
+codingAssistant.use(cache('5 minutes'));
 
-  const { completion, entries } = await completionWithHistory({
-    history: history.getHistory(),
-    userContent: req.query.prompt,
-    temperature: 0.2,
-  });
+codingAssistant.get('/', async (req, res) => {
+  try {
+    await chatCompletion({
+      res,
+      sysContent: 'You are a programming assistant. You will receive programming questions, requests for suggestions or recommendations, or prompts to generate code. When answering questions or making suggestions, be sure to use up-to-date information that follow best practices. When generating code, before sending back your response, you must first check your generated code for errors. Important note: The generated code should prioritize maintainability and readability over performance unless told otherwise in the prompt. Be sure to follow best practices.',
+      userContent: req.query.prompt,
+      temperature: 0.2,
+    });
 
-  history.addEntry(...entries);
-
-  if (history.getTokenEstimate() > 3000) history.summarizeHistory();
-
-  return completion;
-};
+    res.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: '500: An error occurred while fetching openai data',
+    });
+  }
+});
 
 export default codingAssistant;

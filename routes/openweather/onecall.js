@@ -1,5 +1,8 @@
+import { Router } from 'express';
 import needle from 'needle';
 import dotenv from 'dotenv';
+import apicache from 'apicache';
+import { handleCors, handleRateLimit } from '../../utils/middleWares.js';
 
 dotenv.config();
 
@@ -7,7 +10,7 @@ const oneCallUrl = process.env.API_OW_ONECALL_URL;
 const keyName = process.env.API_OW_KEY_NAME;
 const keyValue = process.env.API_OW_KEY_VALUE;
 
-const weatherOC = async (req) => {
+export async function fetchOnecall(req) {
   try {
     const oneCallParams = new URL(req.url, `http://${req.headers.host}`)
       .searchParams;
@@ -30,6 +33,29 @@ const weatherOC = async (req) => {
   } catch (error) {
     console.error(error);
   }
-};
+}
 
-export default weatherOC;
+const onecall = Router();
+const { middleware } = apicache;
+const cache = middleware;
+
+onecall.use(handleCors);
+onecall.use(handleRateLimit({ max: 60, minutes: 180 }));
+onecall.use(cache('5 minutes'));
+
+onecall.get(
+  '/',
+  async (req, res) => {
+    try {
+      const weatherData = await fetchOnecall(req);
+      res.json(weatherData);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: '500: An error occurred while fetching weather data',
+      });
+    }
+  },
+);
+
+export default onecall;
