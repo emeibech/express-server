@@ -15,7 +15,7 @@ get_onecall.rest
 get_tonechanger.rest
 get_codeanalyzer.rest
 get_codingassistant.rest
-get_loregenerator.rest
+get_storygenerator.rest
 get_eli5.rest
 get_generalassistant.rest
 
