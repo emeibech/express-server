@@ -1,5 +1,6 @@
 # Folders
 node_modules
+dist
 
 # Environment variables
 .env
@@ -7,6 +8,8 @@ node_modules
 # Config files
 .eslintrc.json
 .eslintignore
+.prettierrc
+.prettierignore
 
 # .rest file for testing api
 get_weather.rest
