@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import apicache from 'apicache';
-import { handleCors, handleRateLimit } from '../../utils/middleWares.js';
+import { handleCors, handleRateLimit } from '../../common/middleWares.js';
 import chatCompletion from './utils/chatCompletion.js';
+import { getOpenAiError } from '@/common/getErrorMessage.js';
 
 const generalAssistant = Router();
 const { middleware } = apicache;
@@ -16,15 +17,14 @@ generalAssistant.get('/', async (req, res) => {
     await chatCompletion({
       res,
       sysContent: 'You are a helpful assistant.',
-      userContent: req.query.prompt,
+      userContent: String(req.query.prompt),
       temperature: 0.5,
     });
 
     res.end();
   } catch (error) {
-    console.error(error);
     res.status(500).json({
-      error: '500: An error occurred while fetching openai data',
+      error: getOpenAiError(error),
     });
   }
 });
