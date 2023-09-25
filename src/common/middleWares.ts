@@ -28,7 +28,7 @@ export function handleCors(
   if (nodeEnv === 'production') {
     cors(corsOptions)(req, res, next);
   } else {
-    next();
+    cors()(req, res, next);
   }
 }
 
