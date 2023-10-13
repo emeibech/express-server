@@ -10,6 +10,7 @@ import eli5 from './routes/openai/eli5.js';
 import storyGenerator from './routes/openai/storyGenerator.js';
 import toneChanger from './routes/openai/toneChanger.js';
 import generalAssistant from './routes/openai/generalAssistant.js';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const port = process.env.PORT || 3001;
 const app = express();
 
 app.set('trust proxy', 1);
+app.use(bodyParser.json());
 app.use('/', index);
 app.use('/ipgeo', ipgeo);
 app.use('/weather', weather);

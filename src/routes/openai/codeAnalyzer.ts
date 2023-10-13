@@ -1,24 +1,20 @@
 import { Request, Response, Router } from 'express';
-import apicache from 'apicache';
 import { handleCors, handleRateLimit } from '../../common/middleWares.js';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 
 const codeAnalyzer = Router();
-const { middleware } = apicache;
-const cache = middleware;
 
 codeAnalyzer.use(handleCors);
-codeAnalyzer.use(handleRateLimit({ max: 10, minutes: 1440 }));
-codeAnalyzer.use(cache('5 minutes'));
+codeAnalyzer.use(handleRateLimit({ max: 100, minutes: 1440 }));
 
-codeAnalyzer.get('/', async (req: Request, res: Response) => {
+codeAnalyzer.post('/', async (req: Request, res: Response) => {
   try {
     await chatCompletion({
       res,
       sysContent:
-        'Your task is to analyze the code provided to you and help the user understand what the code does. Provide a brief summary followed by an itemized breakdown (group related items together).',
-      userContent: String(req.query.code),
+        "You are going to receive a prompt that contains code. Your task is to analyze that code.\n\nCarefully follow these instructions in your response: \n1. If there is no code in the prompt, respond by saying that you're a code analyzer and expects to receive code in the prompt.\n2. Infer the language used in the code.\n3. Analyze what the code does. Take as much time as you need.\n4. Provide a brief summary of the code followed by an itemized breakdown with related items grouped together.\n5. Respond in this exact format: \n```language\ncode prompt\n```\n\nSummary\n\nBreakdown",
+      userContent: req.body,
       temperature: 0.2,
     });
 

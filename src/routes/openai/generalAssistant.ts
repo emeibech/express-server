@@ -1,23 +1,19 @@
 import { Router } from 'express';
-import apicache from 'apicache';
 import { handleCors, handleRateLimit } from '../../common/middleWares.js';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 
 const generalAssistant = Router();
-const { middleware } = apicache;
-const cache = middleware;
 
 generalAssistant.use(handleCors);
-generalAssistant.use(handleRateLimit({ max: 10, minutes: 1440 }));
-generalAssistant.use(cache('5 minutes'));
+generalAssistant.use(handleRateLimit({ max: 100, minutes: 1440 }));
 
-generalAssistant.get('/', async (req, res) => {
+generalAssistant.post('/', async (req, res) => {
   try {
     await chatCompletion({
       res,
       sysContent: 'You are a helpful assistant.',
-      userContent: String(req.query.prompt),
+      userContent: req.body,
       temperature: 0.5,
     });
 
