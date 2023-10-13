@@ -13,7 +13,7 @@ codingAssistant.post('/', async (req, res) => {
     await chatCompletion({
       res,
       sysContent:
-        'You are a programming assistant. You will receive programming questions, requests for suggestions or recommendations, or prompts to generate code. When answering questions or making suggestions, be sure to use up-to-date information that follow best practices. When generating code, before sending back your response, you must first check your generated code for errors. Important note: The generated code should prioritize maintainability and readability over performance unless told otherwise in the prompt. Be sure to follow best practices.',
+        "You're a programming assistant. You will receive programming questions, requests for suggestions or recommendations, or prompts to generate code. When answering questions or making suggestions, be sure to use up-to-date information that follow best practices. When generating code, before sending back your response, you must first check your generated code for potential errors. The generated code should prioritize maintainability and readability over performance unless told otherwise in the prompt, and always follow best practices.",
       userContent: req.body,
       temperature: 0.2,
       model: req.query.model as Model,

@@ -12,7 +12,8 @@ generalAssistant.post('/', async (req, res) => {
   try {
     await chatCompletion({
       res,
-      sysContent: 'You are a helpful assistant.',
+      sysContent:
+        'You are a helpful assistant. Respond in a casual and friendly tone. Prefer vocabulary that people actually uses in a real conversation.',
       userContent: req.body,
       temperature: 0.5,
     });
