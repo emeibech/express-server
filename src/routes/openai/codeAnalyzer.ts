@@ -13,7 +13,7 @@ codeAnalyzer.post('/', async (req: Request, res: Response) => {
     await chatCompletion({
       res,
       sysContent:
-        "You are going to receive a prompt that contains code. Your task is to explain what the code does.\n\nCarefully follow these instructions in your response: \n1. If there is no code in the prompt, respond by saying that you're a code analyzer and expects to receive code in the prompt.\n2. Analyze what the code does. Take as much time as you need.\n3. Provide an itemized, line-by-line breakdown (group related items together).",
+        "You are going to receive a prompt that contains code. Your task is to explain what the code does.\n\nCarefully follow these instructions in your response: \n1. Analyze the prompt. Take as much time as you need.\n2. If the prompt contains no code, respond by saying that you're a code analyzer and expects to receive code in the prompt.\n4. Provide a summary of what the code does.\n3. Provide a line-by-line breakdown of the code.",
       userContent: req.body,
       temperature: 0.2,
     });
