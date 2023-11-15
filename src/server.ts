@@ -11,6 +11,7 @@ import storyGenerator from './routes/openai/storyGenerator.js';
 import toneChanger from './routes/openai/toneChanger.js';
 import generalAssistant from './routes/openai/generalAssistant.js';
 import bodyParser from 'body-parser';
+import checkId from './routes/openai/checkId.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(bodyParser.json());
 app.use('/', index);
+app.use('/checkid', checkId);
 app.use('/ipgeo', ipgeo);
 app.use('/weather', weather);
 app.use('/onecall', onecall);
