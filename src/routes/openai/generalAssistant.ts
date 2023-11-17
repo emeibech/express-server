@@ -20,9 +20,7 @@ generalAssistant.post('/', async (req, res) => {
 
     res.end();
   } catch (error) {
-    res.status(500).json({
-      error: getOpenAiError(error),
-    });
+    res.status(res.statusCode).send(`Error: ${getOpenAiError(error)}`);
   }
 });
 

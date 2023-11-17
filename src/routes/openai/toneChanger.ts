@@ -20,9 +20,7 @@ toneChanger.post('/', async (req, res) => {
 
     res.end();
   } catch (error) {
-    res.status(res.statusCode).json({
-      error: getOpenAiError(error),
-    });
+    res.status(res.statusCode).send(`Error: ${getOpenAiError(error)}`);
   }
 });
 
