@@ -1,19 +1,23 @@
 import axios, { AxiosError } from 'axios';
 import OpenAI from 'openai';
 
-/* I feel like returning error objects is better than handling them here. 
-  That way I don't have to inject res and I can handle errors the way I want 
-  from the route function.
-*/
+/* These functions just return error messages instead of handling them.
+  That way I don't have to inject res and I can handle errors 
+  the way I want from the routes. */
 
 export function getOpenAiError(error: unknown) {
+  function formatError(errorMessage: string) {
+    if (errorMessage.includes('Connection error.')) {
+      return `${errorMessage} Please check your internet connection.`;
+    } else {
+      return errorMessage;
+    }
+  }
+
   if (error instanceof OpenAI.APIError) {
-    return {
-      status: error.status,
-      message: error.message,
-    };
+    return `${error.status ?? ''} ${formatError(error.message)}`;
   } else {
-    return error;
+    return `${error}`;
   }
 }
 
