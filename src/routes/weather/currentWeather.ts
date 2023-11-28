@@ -1,8 +1,6 @@
 import { Request, Response, Router } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import apicache from 'apicache';
-import { handleCors, handleRateLimit } from '@/common/middleWares.js';
 import { getAxiosError } from '@/common/getErrorMessage.js';
 
 dotenv.config();
@@ -57,15 +55,9 @@ export async function fetchWeather(req: Request) {
   return data;
 }
 
-const weather = Router();
-const { middleware } = apicache;
-const cache = middleware;
+const currentWeather = Router();
 
-weather.use(cache('5 minutes'));
-weather.use(handleCors);
-weather.use(handleRateLimit({ max: 60, minutes: 180 }));
-
-weather.get('/', async (req: Request, res: Response) => {
+currentWeather.get('/', async (req: Request, res: Response) => {
   try {
     const weatherData = await fetchWeather(req);
     res.json(weatherData);
@@ -74,4 +66,4 @@ weather.get('/', async (req: Request, res: Response) => {
   }
 });
 
-export default weather;
+export default currentWeather;

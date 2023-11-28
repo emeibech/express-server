@@ -1,17 +1,14 @@
 import { Request, Response, Router } from 'express';
-import { getIdFromIp, getValue } from '@/common/database/utils.js';
-import { handleCors } from '@/common/middleWares.js';
+import { getIdFromIp, getValue } from '@/database/utils.js';
 import {
   calculateRateLimit,
   decrementRemainingUsage,
   getTimestamp,
   insertUnregistered,
   isLimitReached,
-} from '@/common/database/unregistered.js';
+} from '@/database/unregistered.js';
 
 const checkId = Router();
-
-checkId.use(handleCors);
 
 checkId.post('/', async (req: Request, res: Response) => {
   try {

@@ -1,14 +1,10 @@
-import { Request, Response, Router } from 'express';
-import { handleCors, handleRateLimit } from '../../common/middleWares.js';
+import { Router } from 'express';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 
 const codeAnalyzer = Router();
 
-codeAnalyzer.use(handleCors);
-codeAnalyzer.use(handleRateLimit({ max: 100, minutes: 1440 }));
-
-codeAnalyzer.post('/', async (req: Request, res: Response) => {
+codeAnalyzer.post('/', async (req, res) => {
   try {
     await chatCompletion({
       res,

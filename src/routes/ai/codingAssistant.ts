@@ -1,12 +1,8 @@
 import { Router } from 'express';
-import { handleCors, handleRateLimit } from '../../common/middleWares.js';
 import chatCompletion, { type Model } from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 
 const codingAssistant = Router();
-
-codingAssistant.use(handleCors);
-codingAssistant.use(handleRateLimit({ max: 100, minutes: 1440 }));
 
 codingAssistant.post('/', async (req, res) => {
   try {

@@ -1,7 +1,5 @@
 import { Request, Response, Router } from 'express';
 import axios from 'axios';
-import apicache from 'apicache';
-import { handleCors, handleRateLimit } from '@/common/middleWares.js';
 import { getAxiosError } from '@/common/getErrorMessage.js';
 
 const ipgeoURL = process.env.API_IPGEO_URL;
@@ -25,11 +23,6 @@ export async function fetchIpGeo(req: Request) {
 }
 
 const ipgeo = Router();
-const cache = apicache.middleware;
-
-ipgeo.use(handleCors);
-ipgeo.use(handleRateLimit({ max: 60, minutes: 180 }));
-ipgeo.use(cache('5 minutes'));
 
 ipgeo.get('/', async (req: Request, res: Response) => {
   try {

@@ -1,16 +1,21 @@
+import ai from './ai/ai.js';
 import { Router } from 'express';
+import weather from './weather/weather.js';
 
-const router = Router();
+const index = Router();
 
-router.get('/', (req, res) => {
+index.get('/', (req, res, next) => {
   try {
     res.json({
       serverStatus: 'Active',
-      yourIP: req.header('X-Real-IP'),
+      yourIP: req.header('X-Real-IP') ?? req.ip,
     });
   } catch (error) {
-    res.status(500).json({ error });
+    next(error);
   }
 });
 
-export default router;
+index.use('/ai', ai);
+index.use('/weather', weather);
+
+export default index;

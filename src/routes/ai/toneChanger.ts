@@ -1,12 +1,8 @@
-import { Router } from 'express';
-import { handleCors, handleRateLimit } from '@/common/middleWares.js';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
+import { Router } from 'express';
 
 const toneChanger = Router();
-
-toneChanger.use(handleCors);
-toneChanger.use(handleRateLimit({ max: 100, minutes: 1440 }));
 
 toneChanger.post('/', async (req, res) => {
   try {

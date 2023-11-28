@@ -1,9 +1,7 @@
 import { Request, Response, Router } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import apicache from 'apicache';
-import { handleCors, handleRateLimit } from '@/common/middleWares.js';
-import { type OneCallDataResponse } from './weather.js';
+import { type OneCallDataResponse } from './currentWeather.js';
 import { getAxiosError } from '@/common/getErrorMessage.js';
 
 dotenv.config();
@@ -41,12 +39,6 @@ export async function fetchOnecall(req: Request) {
 }
 
 const onecall = Router();
-const { middleware } = apicache;
-const cache = middleware;
-
-onecall.use(handleCors);
-onecall.use(handleRateLimit({ max: 60, minutes: 180 }));
-onecall.use(cache('5 minutes'));
 
 onecall.get('/', async (req: Request, res: Response) => {
   try {

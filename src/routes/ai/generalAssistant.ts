@@ -1,12 +1,8 @@
 import { Router } from 'express';
-import { handleCors, handleRateLimit } from '../../common/middleWares.js';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 
 const generalAssistant = Router();
-
-generalAssistant.use(handleCors);
-generalAssistant.use(handleRateLimit({ max: 100, minutes: 1440 }));
 
 generalAssistant.post('/', async (req, res) => {
   try {

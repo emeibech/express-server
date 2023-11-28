@@ -1,12 +1,8 @@
-import { Router } from 'express';
-import { handleCors, handleRateLimit } from '@/common/middleWares.js';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
+import { Router } from 'express';
 
 const storyGenerator = Router();
-
-storyGenerator.use(handleCors);
-storyGenerator.use(handleRateLimit({ max: 100, minutes: 1440 }));
 
 storyGenerator.post('/', async (req, res) => {
   try {
