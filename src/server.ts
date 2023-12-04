@@ -1,7 +1,6 @@
 import express, { type Request, type Response } from 'express';
 import dotenv from 'dotenv';
 import index from './routes/index.js';
-import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -9,7 +8,8 @@ const port = process.env.PORT || 3001;
 const app = express();
 
 app.set('trust proxy', 1);
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use('/', index);
 
 app.use((err: Error, _req: Request, res: Response) => {
