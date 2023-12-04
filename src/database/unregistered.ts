@@ -1,32 +1,26 @@
 import pool, { transaction } from './utils.js';
 
 export async function insertUnregistered(ip: string) {
-  const client = await pool.connect();
-
   try {
-    await client.query('BEGIN');
+    await transaction([
+      {
+        text: `
+        INSERT INTO unregistered(ip)
+        SELECT $1
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM unregistered
+          WHERE ip = $1
+        )
+      `,
+        values: [ip],
+      },
+    ]);
 
-    const query = `
-    INSERT INTO unregistered(ip)
-    SELECT $1
-    WHERE NOT EXISTS (
-      SELECT 1
-      FROM unregistered
-      WHERE ip = $1
-    )
-  `;
-
-    const values = [ip];
-
-    await client.query(query, values);
-    await client.query('COMMIT');
     console.log('Unregistered IP added');
   } catch (error) {
-    await client.query('ROLLBACK');
     console.log('An error occured while inserting unregistered IP');
     throw error;
-  } finally {
-    client.release();
   }
 }
 

@@ -28,10 +28,10 @@ checkId.post('/', async (req: Request, res: Response) => {
 
     const timestamp = await getTimestamp(id);
 
-    const remainingUsage = await getValue(
-      'SELECT remaining_usage FROM unregistered WHERE id = $1;',
-      [id],
-    );
+    const remainingUsage = await getValue({
+      text: 'SELECT remaining_usage FROM unregistered WHERE id = $1;',
+      values: [id],
+    });
 
     console.log({ id, timestamp, remainingUsage });
     res.sendStatus(200);

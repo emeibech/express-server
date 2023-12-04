@@ -1,6 +1,6 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
-import type { GetIdFromIp, QueryParams } from '@/types/common.js';
+import type { GetIdFromIp, QueryParams } from '@/types/database.js';
 
 dotenv.config();
 
@@ -14,12 +14,11 @@ pool.on('error', (err) => {
 
 export default pool;
 
-export async function getValue(query: string, values: unknown[]) {
+export async function getValue({ text, values }: QueryParams) {
   try {
     const { rows } = await pool.query({
-      text: query,
+      text,
       values,
-      rowMode: 'array',
     });
     return rows;
   } catch (error) {
