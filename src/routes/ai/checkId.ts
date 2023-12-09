@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { getIdFromIp, getValue } from '@/database/utils.js';
+import { getValue } from '@/database/utils.js';
 import {
   calculateRateLimit,
   decrementRemainingUsage,
@@ -13,10 +13,7 @@ const checkId = Router();
 checkId.post('/', async (req: Request, res: Response) => {
   try {
     await insertUnregistered(req.header('X-Real-IP') || req.ip);
-    const id = await getIdFromIp({
-      table: 'unregistered',
-      value: req.header('X-Real-IP') || req.ip,
-    });
+    const id = 'id';
 
     await calculateRateLimit(id);
 
