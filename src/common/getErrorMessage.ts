@@ -1,4 +1,5 @@
-import axios, { AxiosError } from 'axios';
+import axios, { type AxiosError } from 'axios';
+import jwt from 'jsonwebtoken';
 import OpenAI from 'openai';
 
 /* These functions just return error messages instead of handling them.
@@ -41,4 +42,9 @@ export function getAxiosError(error: unknown) {
   } else {
     return error;
   }
+}
+
+export function getJwtError(error: unknown) {
+  const jwtError = error as jwt.JsonWebTokenError;
+  return `${jwtError.name}: ${jwtError.message}`;
 }
