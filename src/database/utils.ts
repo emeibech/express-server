@@ -1,6 +1,6 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
-import type { GetIdFromIp, QueryParams } from '@/types/database.js';
+import type { QueryParams } from '@/types/database.js';
 
 dotenv.config();
 
@@ -45,17 +45,5 @@ export async function transaction(queries: QueryParams[]) {
     throw error;
   } finally {
     client.release();
-  }
-}
-
-export async function getIdFromIp({ table, value }: GetIdFromIp) {
-  try {
-    const query = `SELECT id FROM ${table} WHERE ip = $1;`;
-    const values = [value];
-    const { rows } = await pool.query(query, values);
-    return rows[0]?.id;
-  } catch (error) {
-    console.log(`Error: ${error}`);
-    throw error;
   }
 }
