@@ -1,7 +1,9 @@
-import cors, { CorsOptions, CorsRequest } from 'cors';
-import { NextFunction, Response } from 'express';
-import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import cors, { CorsOptions, CorsRequest } from 'cors';
+import rateLimit from 'express-rate-limit';
+import { verifyToken } from './utils.js';
+import { verifySession } from '@/database/session.js';
+import type { NextFunction, Request, Response } from 'express';
 
 dotenv.config();
 
@@ -45,4 +47,47 @@ export function handleRateLimit({ max, minutes }: HandleRateLimitParams) {
     legacyHeaders: false,
     message: { error: `Rate limit exceeded. Try again in ${minutes} minutes.` },
   });
+}
+
+export async function handleAccess(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(401).json({ error: 'Access unauthorized.' });
+    }
+
+    const { error, payload } = await verifyToken(token);
+
+    if (error) return res.status(401).json({ error });
+
+    const isSessionValid = await verifySession(payload?.sessionId);
+
+    if (!isSessionValid) {
+      return res.status(401).json({ error: 'Session has expired.' });
+    }
+
+    req.body.user = payload;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export function handleRouteError(
+  err: Error,
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  res.status(res.statusCode).json({
+    [err.name]: err.message,
+  });
+
+  next();
 }
