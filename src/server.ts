@@ -1,6 +1,7 @@
-import express, { type Request, type Response } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import index from './routes/index.js';
+import { handleRouteError } from './common/middleWares.js';
 
 dotenv.config();
 
@@ -11,13 +12,7 @@ app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/', index);
-
-app.use((err: Error, _req: Request, res: Response) => {
-  console.error(err);
-  res.status(500).json({
-    [err.name]: err.message,
-  });
-});
+app.use(handleRouteError);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

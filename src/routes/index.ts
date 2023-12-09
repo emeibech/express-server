@@ -2,6 +2,7 @@ import ai from './ai/ai.js';
 import { Router } from 'express';
 import weather from './weather/weather.js';
 import users from './users/users.js';
+import auth from './auth/auth.js';
 
 const index = Router();
 
@@ -19,5 +20,6 @@ index.get('/', (req, res, next) => {
 index.use('/ai', ai);
 index.use('/weather', weather);
 index.use('/users', users);
+index.use('/auth', auth);
 
 export default index;
