@@ -6,21 +6,21 @@ const logout = Router();
 
 logout.post('/', async (req, res) => {
   try {
-    const { token } = req.body;
+    const { act } = req.body;
 
-    if (!token) {
+    if (!act) {
       return res.status(400).json({ message: 'Incomplete parameter.' });
     }
 
-    const { payload, expired } = await verifyToken(token);
+    const { payload, expired } = await verifyToken(act);
 
     if (expired) {
-      const { sessionId } = decodeToken(token);
+      const { sid } = decodeToken(act);
 
       await transaction([
         {
-          text: 'DELETE FROM session WHERE id = $1',
-          values: [sessionId],
+          text: 'DELETE FROM sessions WHERE id = $1',
+          values: [sid],
         },
       ]);
     }
@@ -28,8 +28,8 @@ logout.post('/', async (req, res) => {
     if (payload) {
       await transaction([
         {
-          text: 'DELETE FROM session WHERE id = $1',
-          values: [payload],
+          text: 'DELETE FROM sessions WHERE id = $1',
+          values: [payload.sid],
         },
       ]);
     }

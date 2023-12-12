@@ -39,20 +39,20 @@ login.post('/', async (req, res) => {
 
     await transaction([
       {
-        text: 'INSERT INTO session (token, user_id) VALUES ($1, $2)',
+        text: 'INSERT INTO sessions (token, user_id) VALUES ($1, $2)',
         values: [sessionToken, user.id],
       },
     ]);
 
     const [sessionId] = await getValue({
-      text: 'SELECT id FROM session WHERE token = $1',
+      text: 'SELECT id FROM sessions WHERE token = $1',
       values: [sessionToken],
     });
 
-    const payload = { type: 'user', id: user.id, sessionId: sessionId.id };
+    const payload = { uid: user.id, sid: sessionId.id };
     const token = jwt.sign(payload, secret, { expiresIn: '15 days' });
 
-    return res.status(200).json({ message: 'Login succeeded!', token });
+    return res.status(200).json({ message: 'Login succeeded!', act: token });
   } catch (error) {
     console.log(error);
     res.status(res.statusCode).json({ error });
