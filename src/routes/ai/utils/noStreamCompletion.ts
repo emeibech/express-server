@@ -1,5 +1,5 @@
 import openai from './openaiConfig.js';
-import { ChatCompletionOptions } from './chatCompletion.js';
+import { ChatCompletionOptions } from '@/types/ai.js';
 
 const noStreamChatCompletion = async ({
   res,

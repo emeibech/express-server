@@ -18,7 +18,7 @@ export function getOpenAiError(error: unknown) {
   if (error instanceof OpenAI.APIError) {
     return `${error.status ?? ''} ${formatError(error.message)}`;
   } else {
-    return `${error}`;
+    return 'Something went wrong while processing the request.';
   }
 }
 

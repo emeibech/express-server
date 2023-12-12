@@ -2,8 +2,9 @@ import dotenv from 'dotenv';
 import cors, { CorsOptions, CorsRequest } from 'cors';
 import rateLimit from 'express-rate-limit';
 import { verifyToken } from './utils.js';
-import { verifySession } from '@/database/session.js';
+import { verifySession } from '@/database/sessions.js';
 import type { NextFunction, Request, Response } from 'express';
+import type { HandleRateLimitParams } from '@/types/middlewares.js';
 
 dotenv.config();
 
@@ -34,11 +35,6 @@ export function handleCors(
   }
 }
 
-export interface HandleRateLimitParams {
-  max: number;
-  minutes: number;
-}
-
 export function handleRateLimit({ max, minutes }: HandleRateLimitParams) {
   return rateLimit({
     max: max || 5,
@@ -55,20 +51,21 @@ export async function handleAccess(
   next: NextFunction,
 ) {
   try {
-    const { token } = req.body;
+    const { act } = req.body;
 
-    if (!token) {
+    if (!act) {
       return res.status(401).json({ error: 'Access unauthorized.' });
     }
 
-    const { error, payload } = await verifyToken(token);
+    const { error, payload, expired } = await verifyToken(act);
 
+    if (expired) return res.status(401).json({ message: 'Token has expired.' });
     if (error) return res.status(401).json({ error });
 
-    const isSessionValid = await verifySession(payload?.sessionId);
+    const isSessionValid = await verifySession(payload?.sid);
 
     if (!isSessionValid) {
-      return res.status(401).json({ error: 'Session has expired.' });
+      return res.status(401).json({ message: 'Session has expired.' });
     }
 
     req.body.user = payload;
