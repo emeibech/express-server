@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { getJwtError } from './getErrorMessage.js';
+import { TokenPayload } from '@/types/common.js';
 
 dotenv.config();
 
@@ -34,9 +35,7 @@ export async function verifyToken(token: string) {
     const secret = process.env.JWT_SECRET || 'jyrf45gq978n_97YG4Q5';
     const decoded = jwt.verify(token, secret);
 
-    return {
-      payload: decoded as JwtPayload,
-    };
+    return { payload: decoded as TokenPayload };
   } catch (error) {
     const jwtError = getJwtError(error);
     if (jwtError.includes('jwt expired')) return { expired: true };

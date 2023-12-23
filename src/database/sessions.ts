@@ -1,7 +1,9 @@
 import { getValue } from './utils.js';
 
-export async function verifySession(sessionId: string) {
+export async function verifySession(sessionId: string | undefined) {
   try {
+    if (!sessionId) throw new Error('sessionId is undefined');
+
     const timeNow = Math.floor(Date.now() / 1000);
 
     const [isSessionValid] = await getValue({
