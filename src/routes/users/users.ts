@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createNewUser, isEmailTaken } from '@/database/users.js';
-import { getValue, transaction } from '@/database/utils.js';
+import pool, { getValue, transaction } from '@/database/utils.js';
 import { hashPassword } from '@/common/utils.js';
 
 type Key = 'firstname' | 'lastname' | 'email' | 'password' | 'dateOfBirth';
@@ -14,7 +14,7 @@ users.get('/', async (_req, res) => {
     res.status(200).json({ users });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });
@@ -30,7 +30,7 @@ users.get('/:userid', async (req, res) => {
     res.status(200).json({ user });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });
@@ -62,7 +62,7 @@ users.post('/', async (req, res) => {
     res.status(201).json({ response: 'New user created successfully.' });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });
@@ -70,29 +70,29 @@ users.post('/', async (req, res) => {
 users.delete('/:userid', async (req, res) => {
   try {
     const userid = req.params.userid;
-    const [name] = await getValue({
-      text: 'SELECT firstname, lastname FROM users WHERE id = $1;',
+    const [user] = await getValue({
+      text: 'SELECT email FROM users WHERE id = $1;',
       values: [userid],
     });
 
-    if (!name) {
+    if (!user) {
       res.status(404).json({ error: 'User not found.' });
       return;
     }
 
-    await transaction([
-      {
-        text: 'DELETE FROM users WHERE id = $1',
-        values: [userid],
-      },
-    ]);
+    const query = {
+      text: 'DELETE FROM users WHERE id = $1',
+      values: [userid],
+    };
+
+    await pool.query(query);
 
     res.status(200).json({
-      response: `User ${name.firstname} ${name.lastname} has been deleted.`,
+      response: `User ${user.email} has been deleted.`,
     });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });
@@ -147,7 +147,7 @@ users.put('/:userid', async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });
@@ -183,7 +183,7 @@ users.patch('/:userid', async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });

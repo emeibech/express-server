@@ -27,7 +27,7 @@ protectedRoute.post('/', async (req, res) => {
       .status(200)
       .json({ message: 'Protected route is unlocked.', user });
   } catch (error) {
-    return res.status(res.statusCode).json({ error });
+    return res.status(500).json({ error });
   }
 });
 

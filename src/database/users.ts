@@ -1,5 +1,5 @@
 import { CreateNewUser } from '@/types/database.js';
-import pool, { transaction } from './utils.js';
+import pool from './utils.js';
 
 export async function isEmailTaken(email: string) {
   try {
@@ -22,15 +22,15 @@ export async function createNewUser({
   lastname = null,
 }: CreateNewUser) {
   try {
-    await transaction([
-      {
-        text: `
-          INSERT INTO users (firstname, lastname, email, password, date_of_birth)
-          VALUES ($1, $2, $3, $4, $5);
-        `,
-        values: [firstname, lastname, email, hashedPassword, dateOfBirth],
-      },
-    ]);
+    const query = {
+      text: `
+        INSERT INTO users (firstname, lastname, email, password, date_of_birth)
+        VALUES ($1, $2, $3, $4, $5);
+      `,
+      values: [firstname, lastname, email, hashedPassword, dateOfBirth],
+    };
+
+    await pool.query(query);
 
     console.log('New user created');
   } catch (error) {

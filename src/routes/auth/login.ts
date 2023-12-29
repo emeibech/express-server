@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { comparePasswords } from '@/common/utils.js';
-import { getValue, transaction } from '@/database/utils.js';
+import pool, { getValue } from '@/database/utils.js';
 import { Router } from 'express';
 import { nanoid } from 'nanoid';
 
@@ -37,12 +37,12 @@ login.post('/', async (req, res) => {
 
     const sessionToken = nanoid();
 
-    await transaction([
-      {
-        text: 'INSERT INTO sessions (token, user_id) VALUES ($1, $2)',
-        values: [sessionToken, user.id],
-      },
-    ]);
+    const query = {
+      text: 'INSERT INTO sessions (token, user_id) VALUES ($1, $2)',
+      values: [sessionToken, user.id],
+    };
+
+    await pool.query(query);
 
     const [sessionId] = await getValue({
       text: 'SELECT id FROM sessions WHERE token = $1',
@@ -55,7 +55,7 @@ login.post('/', async (req, res) => {
     return res.status(200).json({ message: 'Login succeeded!', act: token });
   } catch (error) {
     console.log(error);
-    res.status(res.statusCode).json({ error });
+    res.status(500).json({ error });
     throw error;
   }
 });
