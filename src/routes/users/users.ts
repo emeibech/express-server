@@ -8,9 +8,7 @@ const users = Router();
 
 users.get('/', async (_req, res) => {
   try {
-    const users = await getValue({
-      text: 'SELECT * FROM users',
-    });
+    const users = await getValue({ text: 'SELECT * FROM users' });
     res.status(200).json({ users });
   } catch (error) {
     console.log(error);
@@ -19,12 +17,12 @@ users.get('/', async (_req, res) => {
   }
 });
 
-users.get('/:userid', async (req, res) => {
+users.get('/:id', async (req, res) => {
   try {
-    const userid = req.params.userid;
+    const userId = req.params.id;
     const user = await getValue({
       text: 'SELECT * FROM users WHERE id = $1',
-      values: [userid],
+      values: [userId],
     });
 
     res.status(200).json({ user });
@@ -67,12 +65,12 @@ users.post('/', async (req, res) => {
   }
 });
 
-users.delete('/:userid', async (req, res) => {
+users.delete('/:id', async (req, res) => {
   try {
-    const userid = req.params.userid;
+    const userId = req.params.id;
     const [user] = await getValue({
       text: 'SELECT email FROM users WHERE id = $1;',
-      values: [userid],
+      values: [userId],
     });
 
     if (!user) {
@@ -80,12 +78,7 @@ users.delete('/:userid', async (req, res) => {
       return;
     }
 
-    const query = {
-      text: 'DELETE FROM users WHERE id = $1',
-      values: [userid],
-    };
-
-    await pool.query(query);
+    await pool.query('DELETE FROM users WHERE id = $1', [userId]);
 
     res.status(200).json({
       response: `User ${user.email} has been deleted.`,
@@ -97,12 +90,12 @@ users.delete('/:userid', async (req, res) => {
   }
 });
 
-users.put('/:userid', async (req, res) => {
+users.put('/:id', async (req, res) => {
   try {
-    const userid = req.params.userid;
+    const userId = req.params.id;
     const [user] = await getValue({
       text: 'SELECT email FROM users WHERE id = $1;',
-      values: [userid],
+      values: [userId],
     });
 
     if (!user) {
@@ -137,7 +130,7 @@ users.put('/:userid', async (req, res) => {
           email,
           hashedPassword,
           dateOfBirth,
-          userid,
+          userId,
         ],
       },
     ]);
@@ -152,13 +145,13 @@ users.put('/:userid', async (req, res) => {
   }
 });
 
-users.patch('/:userid', async (req, res) => {
+users.patch('/:id', async (req, res) => {
   try {
-    const userid = req.params.userid;
+    const userId = req.params.id;
 
     const [user] = await getValue({
       text: 'SELECT email FROM users WHERE id = $1;',
-      values: [userid],
+      values: [userId],
     });
 
     if (!user) {
@@ -172,7 +165,7 @@ users.patch('/:userid', async (req, res) => {
     const queries = Object.keys(updates).map((key) => {
       return {
         text: getQueries(key as Key),
-        values: [key === 'password' ? hashedPassword : updates[key], userid],
+        values: [key === 'password' ? hashedPassword : updates[key], userId],
       };
     });
 

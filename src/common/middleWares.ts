@@ -51,13 +51,13 @@ export async function handleAccess(
   next: NextFunction,
 ) {
   try {
-    const { act } = req.body;
+    const token = req.headers.authorization;
 
-    if (!act) {
+    if (!token) {
       return res.status(401).json({ message: 'Access unauthorized.' });
     }
 
-    const { error, payload, expired } = await verifyToken(act);
+    const { error, payload, expired } = await verifyToken(token);
 
     if (expired) return res.status(401).json({ message: 'Token has expired.' });
     if (error) return res.status(401).json({ message: error });
