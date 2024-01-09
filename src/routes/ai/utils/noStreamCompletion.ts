@@ -21,7 +21,7 @@ const noStreamChatCompletion = async ({
   });
 
   const data = stream.choices[0].message.content;
-  res.json(data);
+  res.status(200).json({ message: data });
 };
 
 export default noStreamChatCompletion;

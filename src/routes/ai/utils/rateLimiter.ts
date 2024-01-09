@@ -2,6 +2,7 @@ import { getTimestamp, isLimitReached } from '@/database/rateLimits.js';
 import { transaction } from '@/database/utils.js';
 import type { NextFunction, Request, Response } from 'express';
 
+// in seconds
 const defaultDuration = 30;
 
 export default async function rateLimiter(
