@@ -25,7 +25,9 @@ conversations.get('/', async (req, res) => {
       values: [user.uid, chatInterface],
     });
 
-    res.status(200).json({ conversationData });
+    res
+      .status(200)
+      .json({ conversationData: conversationData.slice().reverse() });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });
