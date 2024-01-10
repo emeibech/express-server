@@ -1,11 +1,8 @@
-import jwt from 'jsonwebtoken';
-import { comparePasswords } from '@/common/utils.js';
-import pool, { getValue } from '@/database/utils.js';
+import { comparePasswords, createSession } from '@/common/utils.js';
+import { getValue } from '@/database/utils.js';
 import { Router } from 'express';
-import { nanoid } from 'nanoid';
 
 const login = Router();
-const secret = process.env.JWT_SECRET || 'jyrf45gq978n_97YG4Q5';
 
 login.post('/', async (req, res) => {
   try {
@@ -35,22 +32,7 @@ login.post('/', async (req, res) => {
       return res.status(401).json({ message: 'Incorrect email or password.' });
     }
 
-    const sessionToken = nanoid();
-
-    const query = {
-      text: 'INSERT INTO sessions (token, user_id) VALUES ($1, $2)',
-      values: [sessionToken, user.id],
-    };
-
-    await pool.query(query);
-
-    const [sessionId] = await getValue({
-      text: 'SELECT id FROM sessions WHERE token = $1',
-      values: [sessionToken],
-    });
-
-    const payload = { uid: user.id, sid: sessionId.id };
-    const token = jwt.sign(payload, secret, { expiresIn: '15 days' });
+    const token = await createSession(user.id);
 
     return res.status(200).json({ message: 'Login succeeded!', act: token });
   } catch (error) {
