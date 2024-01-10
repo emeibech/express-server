@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { getJwtError } from './getErrorMessage.js';
 import { TokenPayload } from '@/types/common.js';
+import pool from '@/database/utils.js';
+import { nanoid } from 'nanoid';
 
 dotenv.config();
 
@@ -52,4 +54,22 @@ export function decodeToken(token: string) {
   const buff = Buffer.from(payload, 'base64url');
   const decoded = buff.toString('ascii');
   return JSON.parse(decoded);
+}
+
+export async function createSession(userId: string) {
+  const secret = process.env.JWT_SECRET || 'jyrf45gq978n_97YG4Q5';
+  const sessionToken = nanoid();
+  const session = await pool.query(
+    'INSERT INTO sessions (token, user_id) VALUES ($1, $2) RETURNING id',
+    [sessionToken, userId],
+  );
+
+  const payload = {
+    uid: userId,
+    sid: session.rows[0].id,
+  };
+
+  const token = jwt.sign(payload, secret, { expiresIn: '15 days' });
+
+  return token;
 }
