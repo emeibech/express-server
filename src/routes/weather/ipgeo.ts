@@ -3,8 +3,8 @@ import axios from 'axios';
 import { getAxiosError } from '@/common/getErrorMessage.js';
 
 const ipgeoURL = process.env.API_IPGEO_URL;
-const keyName = process.env.API_IPGEO_KEY_NAME || 'apiKey';
-const keyValue = process.env.API_IPGEO_KEY_VALUE || '';
+const keyName = 'apiKey';
+const keyValue = process.env.API_IPGEO_KEY_VALUE ?? '';
 
 export async function fetchIpGeo(req: Request) {
   const params = new URLSearchParams();

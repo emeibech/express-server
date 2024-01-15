@@ -7,7 +7,7 @@ import { getAxiosError } from '@/common/getErrorMessage.js';
 dotenv.config();
 
 const oneCallUrl = process.env.API_OW_ONECALL_URL;
-const keyName = process.env.API_OW_KEY_NAME ?? 'APPID';
+const keyName = 'APPID';
 const keyValue = process.env.API_OW_KEY_VALUE ?? '';
 
 export async function fetchOnecall(req: Request) {

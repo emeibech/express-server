@@ -7,7 +7,7 @@ dotenv.config();
 
 const weatherUrl = process.env.API_OW_WEATHER_URL;
 const oneCallUrl = process.env.API_OW_ONECALL_URL;
-const keyName = process.env.API_OW_KEY_NAME ?? 'APPID';
+const keyName = 'APPID';
 const keyValue = process.env.API_OW_KEY_VALUE ?? '';
 
 export interface WeatherDataResponse {
