@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
+import logError from '@/common/logError.js';
 
 const codeAnalyzer = Router();
 
@@ -17,6 +18,7 @@ codeAnalyzer.post('/', async (req, res) => {
     res.end();
   } catch (error) {
     res.status(500).send(getOpenAiError(error));
+    logError(`codeAnalyzer at @/routes/ai/: ${error}`);
   }
 });
 

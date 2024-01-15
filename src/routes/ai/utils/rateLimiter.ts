@@ -1,8 +1,11 @@
+import logError from '@/common/logError.js';
 import { getTimestamp, isLimitReached } from '@/database/rateLimits.js';
 import { transaction } from '@/database/utils.js';
 import type { NextFunction, Request, Response } from 'express';
 
-// in seconds
+const superUsers: number[] = JSON.parse(process.env.SUPERUSERS || '[]');
+
+// default duration for rate limiter in seconds
 const defaultDuration = 30;
 
 export default async function rateLimiter(
@@ -13,6 +16,11 @@ export default async function rateLimiter(
   try {
     const { uid } = req.body.user;
     await insertRateLimit(uid);
+
+    // for accounts you want to exempt from rate limiter, like your own account
+    if (superUsers.includes(uid)) {
+      return next();
+    }
 
     const timeNow = Date.now() / 1000;
     const timestamp = await getTimestamp(uid);
@@ -28,7 +36,7 @@ export default async function rateLimiter(
 
     return next();
   } catch (error) {
-    console.log('Rate limiter error: ', error);
+    logError(`rateLimiter at @/routes/ai/utils: ${error}`);
     res.status(500).json({ message: 'An error occured' });
   }
 }
@@ -49,10 +57,7 @@ export async function insertRateLimit(id: string) {
         values: [id],
       },
     ]);
-
-    console.log('Rate limit added');
   } catch (error) {
-    console.log('An error occured while inserting rate limit', error);
-    throw error;
+    logError(`insertRateLimit at @/routes/ai/utils: ${error}`);
   }
 }

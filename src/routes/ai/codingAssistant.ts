@@ -2,6 +2,7 @@ import { Router } from 'express';
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 import type { Model } from '@/types/ai.js';
+import logError from '@/common/logError.js';
 
 const codingAssistant = Router();
 
@@ -19,6 +20,7 @@ codingAssistant.post('/', async (req, res) => {
     res.end();
   } catch (error) {
     res.status(500).send(getOpenAiError(error));
+    logError(`codingAssistant at @/routes/ai/: ${error}`);
   }
 });
 

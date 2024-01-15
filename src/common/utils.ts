@@ -5,6 +5,7 @@ import { getJwtError } from './getErrorMessage.js';
 import { TokenPayload } from '@/types/common.js';
 import pool from '@/database/utils.js';
 import { nanoid } from 'nanoid';
+import logError from './logError.js';
 
 dotenv.config();
 
@@ -14,8 +15,7 @@ export async function hashPassword(password: string) {
     const hash = await bcrypt.hash(password, saltRounds);
     return hash;
   } catch (error) {
-    console.error('Error hashing password:', error);
-    throw error;
+    logError(`hashPassword at @/common/utils.ts: ${error}`);
   }
 }
 
@@ -27,8 +27,7 @@ export async function comparePasswords(
     const result = await bcrypt.compare(plainPassword, hashedPassword);
     return result;
   } catch (error) {
-    console.error('Error comparing passwords:', error);
-    throw error;
+    logError(`comparePasswords at @/common/utils.ts: ${error}`);
   }
 }
 

@@ -1,6 +1,7 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
 import type { QueryParams } from '@/types/database.js';
+import logError from '@/common/logError.js';
 
 dotenv.config();
 
@@ -22,8 +23,8 @@ export async function getValue({ text, values }: QueryParams) {
     });
     return rows;
   } catch (error) {
-    console.log(`Error: ${error}`);
-    throw error;
+    logError(`getValue at @/database/utils.ts: ${error}`);
+    return [];
   }
 }
 
@@ -41,8 +42,7 @@ export async function transaction(queries: QueryParams[]) {
     console.log('Transaction successful');
   } catch (error) {
     await client.query('ROLLBACK');
-    console.log(`Error: ${error}`);
-    throw error;
+    logError(`transaction at @/database/utils.ts: ${error}`);
   } finally {
     client.release();
   }

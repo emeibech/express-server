@@ -3,6 +3,7 @@ import pool, { getValue } from '@/database/utils.js';
 import { Router } from 'express';
 import { validateMessages } from './validateMessages.js';
 import type { Message } from '@/types/route.js';
+import logError from '@/common/logError.js';
 
 const messages = Router();
 messages.use(handleAccess);
@@ -18,9 +19,8 @@ messages.get('/', async (req, res) => {
 
     res.status(200).json({ messages });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`messages GET at @/routes/conversations/messages: ${error}`);
   }
 });
 
@@ -45,9 +45,8 @@ messages.post('/', validateMessages, async (req, res) => {
 
     res.status(200).json({ message: 'Message added.', ids });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`messages POST at @/routes/conversations/messages: ${error}`);
   }
 });
 
@@ -57,9 +56,8 @@ messages.delete('/:id', async (req, res) => {
     pool.query('DELETE FROM messages WHERE id = $1', [id]);
     res.status(200).json({ message: 'Messages deleted.' });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`messages DELETE at @/routes/conversations/messages: ${error}`);
   }
 });
 

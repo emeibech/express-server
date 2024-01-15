@@ -3,6 +3,7 @@ import pool, { getValue } from '@/database/utils.js';
 import { Router } from 'express';
 import messages from './messages/messages.js';
 import { getPagedChunk } from './utils.js';
+import logError from '@/common/logError.js';
 
 const conversations = Router();
 conversations.use(handleAccess);
@@ -47,9 +48,8 @@ conversations.get('/', async (req, res) => {
 
     res.status(200).json({ conversationData: chunkedData, end });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`conversations GET at @/routes/conversations/: ${error}`);
   }
 });
 
@@ -79,9 +79,8 @@ conversations.post('/', async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`conversations POST at @/routes/conversations/: ${error}`);
   }
 });
 
@@ -91,9 +90,8 @@ conversations.delete('/:id', async (req, res) => {
     await pool.query('DELETE FROM conversations WHERE id = $1', [id]);
     res.status(200).json({ message: 'Conversation deleted.' });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`conversations DELETE at @/routes/conversations/: ${error}`);
   }
 });
 
@@ -127,9 +125,8 @@ conversations.patch('/:id', async (req, res) => {
 
     res.status(200).json({ message: 'Conversation title updated.' });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`conversations PATCH at @/routes/conversations/: ${error}`);
   }
 });
 

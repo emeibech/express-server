@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { NextFunction, Request, Response } from 'express';
+import logError from '@/common/logError.js';
 
 const userContentSchema = z.array(
   z.object({
@@ -26,6 +27,6 @@ export function validateUserContent(
 
     next();
   } catch (error) {
-    console.log('An error occured while validating userContent: ', error);
+    logError(`validateUserContent at @/routes/ai/utils: ${error}`);
   }
 }

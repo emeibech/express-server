@@ -1,3 +1,4 @@
+import logError from '@/common/logError.js';
 import { comparePasswords, createSession } from '@/common/utils.js';
 import { getValue } from '@/database/utils.js';
 import { Router } from 'express';
@@ -36,9 +37,8 @@ login.post('/', async (req, res) => {
 
     return res.status(200).json({ message: 'Login succeeded!', act: token });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`login POST at @/routes/auth/: ${error}`);
   }
 });
 

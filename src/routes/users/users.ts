@@ -2,18 +2,21 @@ import { Router } from 'express';
 import { createNewUser, isEmailTaken } from '@/database/users.js';
 import pool, { getValue, transaction } from '@/database/utils.js';
 import { hashPassword } from '@/common/utils.js';
+import { handleCors } from '@/common/middleWares.js';
+import logError from '@/common/logError.js';
 
 type Key = 'firstname' | 'lastname' | 'email' | 'password' | 'dateOfBirth';
 const users = Router();
+
+users.use(handleCors);
 
 users.get('/', async (_req, res) => {
   try {
     const users = await getValue({ text: 'SELECT * FROM users' });
     res.status(200).json({ users });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`users GET at @/routes/users/: ${error}`);
   }
 });
 
@@ -27,9 +30,8 @@ users.get('/:id', async (req, res) => {
 
     res.status(200).json({ user });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`users/:id GET at @/routes/users/: ${error}`);
   }
 });
 
@@ -49,19 +51,21 @@ users.post('/', async (req, res) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    await createNewUser({
-      firstname,
-      lastname,
-      email,
-      hashedPassword,
-      dateOfBirth,
-    });
 
-    res.status(201).json({ response: 'New user created successfully.' });
+    if (hashedPassword) {
+      await createNewUser({
+        firstname,
+        lastname,
+        email,
+        hashedPassword,
+        dateOfBirth,
+      });
+    }
+
+    res.status(201).json({ message: 'New user created successfully.' });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`users POST at @/routes/users/: ${error}`);
   }
 });
 
@@ -81,12 +85,11 @@ users.delete('/:id', async (req, res) => {
     await pool.query('DELETE FROM users WHERE id = $1', [userId]);
 
     res.status(200).json({
-      response: `User ${user.email} has been deleted.`,
+      message: `User ${user.email} has been deleted.`,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`users DELETE at @/routes/users/: ${error}`);
   }
 });
 
@@ -136,12 +139,11 @@ users.put('/:id', async (req, res) => {
     ]);
 
     res.status(200).json({
-      response: 'User data has been replaced.',
+      message: 'User data has been replaced.',
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`users PUT at @/routes/users/: ${error}`);
   }
 });
 
@@ -155,7 +157,7 @@ users.patch('/:id', async (req, res) => {
     });
 
     if (!user) {
-      res.status(404).json({ response: 'User not found.' });
+      res.status(404).json({ message: 'User not found.' });
       return;
     }
 
@@ -172,12 +174,11 @@ users.patch('/:id', async (req, res) => {
     await transaction([...queries]);
 
     res.status(200).json({
-      response: 'User data has been updated.',
+      message: 'User data has been updated.',
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`users PATCH at @/routes/users/: ${error}`);
   }
 });
 

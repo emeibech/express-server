@@ -1,5 +1,6 @@
 import { CreateNewUser } from '@/types/database.js';
 import pool from './utils.js';
+import logError from '@/common/logError.js';
 
 export async function isEmailTaken(email: string) {
   try {
@@ -9,8 +10,7 @@ export async function isEmailTaken(email: string) {
 
     return rows.length > 0;
   } catch (error) {
-    console.log('Something went wrong when checking email validity.');
-    throw error;
+    logError(`isEmailTaken at @/database/users.ts: ${error}`);
   }
 }
 
@@ -34,7 +34,6 @@ export async function createNewUser({
 
     console.log('New user created');
   } catch (error) {
-    console.log('Something went wrong when creating new user.');
-    throw error;
+    logError(`createNewUser at @/database/users.ts: ${error}`);
   }
 }

@@ -1,3 +1,4 @@
+import logError from '@/common/logError.js';
 import { getValue } from './utils.js';
 
 export async function verifySession(sessionId: string | undefined) {
@@ -13,7 +14,7 @@ export async function verifySession(sessionId: string | undefined) {
 
     return isSessionValid;
   } catch (error) {
-    console.log(error);
+    logError(`verifySession at @/database/sessions.ts: ${error}`);
     return false;
   }
 }

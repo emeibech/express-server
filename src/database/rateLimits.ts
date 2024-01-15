@@ -1,3 +1,4 @@
+import logError from '@/common/logError.js';
 import pool, { transaction } from './utils.js';
 
 const defaultDuration = 30;
@@ -11,7 +12,7 @@ export async function getTimestamp(userId: string) {
     const { rows } = await pool.query(query, values);
     return rows[0]?.timestamp;
   } catch (error) {
-    console.log('An error occured while geting timestamp: ', error);
+    logError(`getTimeStamp at @/database/rateLimits.ts: ${error}`);
   }
 }
 
@@ -23,7 +24,7 @@ export async function getRemainingUsage(userId: string) {
     const { rows } = await pool.query(query, values);
     return rows[0]?.remaining_usage;
   } catch (error) {
-    console.log('An error occured while getting remaining usage: ', error);
+    logError(`getRemainingUsage at @/database/rateLimits.ts: ${error}`);
   }
 }
 
@@ -32,7 +33,7 @@ export async function isLimitReached(userId: string) {
     const remainingUsage = await getRemainingUsage(userId);
     return remainingUsage === 0;
   } catch (error) {
-    console.log(`Error: ${error}`);
+    logError(`isLimitReached at @/database/rateLimits.ts: ${error}`);
   }
 }
 
@@ -62,10 +63,8 @@ export async function resetRateLimit(userId: string, timestamp: number) {
         },
       ]);
     }
-
-    console.log('Rate limit reset');
   } catch (error) {
-    console.log('An error occured while resetting rate limit: ', error);
+    logError(`resetRateLimit at @/database/rateLimits.ts: ${error}`);
   }
 }
 
@@ -82,9 +81,7 @@ export async function decrementRemainingUsage(userId: string) {
         values: [userId],
       },
     ]);
-
-    console.log('Remaining Usage decremented');
   } catch (error) {
-    console.log('An error occured while decrementing usage: ', error);
+    logError(`decrementRemainingUsage at @/database/rateLimits.ts: ${error}`);
   }
 }

@@ -1,6 +1,7 @@
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 import { Router } from 'express';
 import noStreamChatCompletion from './utils/noStreamCompletion.js';
+import logError from '@/common/logError.js';
 const titleCreator = Router();
 
 titleCreator.post('/', async (req, res) => {
@@ -16,6 +17,7 @@ titleCreator.post('/', async (req, res) => {
     res.end();
   } catch (error) {
     res.status(500).send(getOpenAiError(error));
+    logError(`titleCreator at @/routes/ai/: ${error}`);
   }
 });
 

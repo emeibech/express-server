@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { NextFunction, Request, Response } from 'express';
+import logError from '@/common/logError.js';
 
 const messagesSchema = z.array(
   z.object({
@@ -28,6 +29,6 @@ export function validateMessages(
 
     next();
   } catch (error) {
-    console.log('An error occured while validating userContent: ', error);
+    logError(`validateMessages at @/routes/conversations/messages: ${error}`);
   }
 }

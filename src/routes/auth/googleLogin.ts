@@ -1,6 +1,7 @@
 import pool, { getValue } from '@/database/utils.js';
 import { Router } from 'express';
 import { createSession } from '@/common/utils.js';
+import logError from '@/common/logError.js';
 
 const googleLogin = Router();
 
@@ -36,9 +37,8 @@ googleLogin.post('/', async (req, res) => {
       .status(200)
       .json({ message: 'Login using Google succeeded!', act: token });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
-    throw error;
+    logError(`googleLogin POST at @/routes/auth/: ${error}`);
   }
 });
 

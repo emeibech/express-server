@@ -1,5 +1,6 @@
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
+import logError from '@/common/logError.js';
 import { Router } from 'express';
 
 const toneChanger = Router();
@@ -17,6 +18,7 @@ toneChanger.post('/', async (req, res) => {
     res.end();
   } catch (error) {
     res.status(500).send(getOpenAiError(error));
+    logError(`toneChanger at @/routes/ai/: ${error}`);
   }
 });
 

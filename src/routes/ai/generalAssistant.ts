@@ -8,6 +8,7 @@ import {
   resetRateLimit,
 } from '@/database/rateLimits.js';
 import { validateUserContent } from './utils/validateUserContent.js';
+import logError from '@/common/logError.js';
 
 const generalAssistant = Router();
 
@@ -39,7 +40,7 @@ generalAssistant.post('/', async (req, res) => {
 
     res.end();
   } catch (error) {
-    console.log('General Assistant error: ', error);
+    logError(`generalAssistant at @/routes/ai/: ${error}`);
     return res.status(500).send(getOpenAiError(error));
   }
 });

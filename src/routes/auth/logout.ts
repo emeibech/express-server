@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { decodeToken, verifyToken } from '@/common/utils.js';
 import { transaction } from '@/database/utils.js';
+import logError from '@/common/logError.js';
 
 const logout = Router();
 
@@ -36,8 +37,8 @@ logout.post('/', async (req, res) => {
 
     res.status(200).json({ message: 'Log out successful.' });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: error });
+    res.status(500).json({ message: error });
+    logError(`logout POST at @/routes/auth/: ${error}`);
   }
 });
 

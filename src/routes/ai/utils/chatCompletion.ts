@@ -1,5 +1,6 @@
 import { ChatCompletionOptions } from '@/types/ai.js';
 import openai from './openaiConfig.js';
+import logError from '@/common/logError.js';
 
 const chatCompletion = async ({
   res,
@@ -8,24 +9,28 @@ const chatCompletion = async ({
   temperature,
   model,
 }: ChatCompletionOptions) => {
-  const stream = await openai.chat.completions.create({
-    temperature,
-    stream: true,
-    model: model || 'gpt-3.5-turbo',
-    messages: [
-      {
-        role: 'system',
-        content: sysContent,
-      },
-      ...userContent,
-    ],
-  });
+  try {
+    const stream = await openai.chat.completions.create({
+      temperature,
+      stream: true,
+      model: model || 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: sysContent,
+        },
+        ...userContent,
+      ],
+    });
 
-  res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Type', 'text/plain');
 
-  for await (const chunk of stream) {
-    const message = chunk.choices[0]?.delta?.content ?? '';
-    res.write(message);
+    for await (const chunk of stream) {
+      const message = chunk.choices[0]?.delta?.content ?? '';
+      res.write(message);
+    }
+  } catch (error) {
+    logError(`chatCompletion at @/routes/ai/utils/: ${error}`);
   }
 };
 

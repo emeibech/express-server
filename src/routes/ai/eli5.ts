@@ -1,5 +1,6 @@
 import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
+import logError from '@/common/logError.js';
 import { Router } from 'express';
 
 const eli5 = Router();
@@ -17,6 +18,7 @@ eli5.post('/', async (req, res) => {
     res.end();
   } catch (error) {
     res.status(500).send(getOpenAiError(error));
+    logError(`eli5 at @/routes/ai/: ${error}`);
   }
 });
 
