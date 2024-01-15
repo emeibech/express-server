@@ -2,11 +2,28 @@ import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 import logError from '@/common/logError.js';
 import { Router } from 'express';
+import { handleAccess } from '@/common/middleWares.js';
+import rateLimiter from './utils/rateLimiter.js';
+import { validateUserContent } from './utils/validateUserContent.js';
+import {
+  decrementRemainingUsage,
+  resetRateLimit,
+} from '@/database/rateLimits.js';
 
 const storyGenerator = Router();
 
+storyGenerator.use(handleAccess);
+storyGenerator.use(rateLimiter);
+storyGenerator.use(validateUserContent);
+
 storyGenerator.post('/', async (req, res) => {
   try {
+    const { user, timestamp, userContent } = req.body;
+
+    if (!userContent) {
+      return res.status(400).json({ message: 'Request has no content.' });
+    }
+
     await chatCompletion({
       res,
       sysContent:
@@ -14,6 +31,12 @@ storyGenerator.post('/', async (req, res) => {
       userContent: req.body.userContent,
       temperature: 0.7,
     });
+
+    if (timestamp) {
+      await resetRateLimit(user.uid, timestamp);
+    }
+
+    await decrementRemainingUsage(user.uid);
 
     res.end();
   } catch (error) {

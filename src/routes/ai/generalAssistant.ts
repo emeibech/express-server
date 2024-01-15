@@ -40,8 +40,8 @@ generalAssistant.post('/', async (req, res) => {
 
     res.end();
   } catch (error) {
+    res.status(500).send(getOpenAiError(error));
     logError(`generalAssistant at @/routes/ai/: ${error}`);
-    return res.status(500).send(getOpenAiError(error));
   }
 });
 

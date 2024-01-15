@@ -3,11 +3,28 @@ import chatCompletion from './utils/chatCompletion.js';
 import { getOpenAiError } from '@/common/getErrorMessage.js';
 import type { Model } from '@/types/ai.js';
 import logError from '@/common/logError.js';
+import { handleAccess } from '@/common/middleWares.js';
+import rateLimiter from './utils/rateLimiter.js';
+import { validateUserContent } from './utils/validateUserContent.js';
+import {
+  decrementRemainingUsage,
+  resetRateLimit,
+} from '@/database/rateLimits.js';
 
 const codingAssistant = Router();
 
+codingAssistant.use(handleAccess);
+codingAssistant.use(rateLimiter);
+codingAssistant.use(validateUserContent);
+
 codingAssistant.post('/', async (req, res) => {
   try {
+    const { user, timestamp, userContent } = req.body;
+
+    if (!userContent) {
+      return res.status(400).json({ message: 'Request has no content.' });
+    }
+
     await chatCompletion({
       res,
       sysContent:
@@ -16,6 +33,12 @@ codingAssistant.post('/', async (req, res) => {
       temperature: 0.2,
       model: req.query.model as Model,
     });
+
+    if (timestamp) {
+      await resetRateLimit(user.uid, timestamp);
+    }
+
+    await decrementRemainingUsage(user.uid);
 
     res.end();
   } catch (error) {
