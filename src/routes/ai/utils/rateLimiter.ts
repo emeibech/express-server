@@ -6,7 +6,7 @@ import type { NextFunction, Request, Response } from 'express';
 const superUsers: number[] = JSON.parse(process.env.SUPERUSERS || '[]');
 
 // default duration for rate limiter in seconds
-const defaultDuration = 30;
+const defaultDuration = 86400;
 
 export default async function rateLimiter(
   req: Request,

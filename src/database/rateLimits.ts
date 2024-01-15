@@ -1,8 +1,8 @@
 import logError from '@/common/logError.js';
 import pool, { transaction } from './utils.js';
 
-const defaultDuration = 30;
-const defaultLimit = 3;
+const defaultDuration = 86400;
+const defaultLimit = 50;
 
 export async function getTimestamp(userId: string) {
   try {
