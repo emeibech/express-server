@@ -60,9 +60,9 @@ const currentWeather = Router();
 currentWeather.get('/', async (req: Request, res: Response) => {
   try {
     const weatherData = await fetchWeather(req);
-    res.json(weatherData);
+    res.status(200).json(weatherData);
   } catch (error) {
-    res.status(res.statusCode).json(getAxiosError(error));
+    res.status(500).json(getAxiosError(error));
   }
 });
 

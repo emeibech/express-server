@@ -43,9 +43,9 @@ const onecall = Router();
 onecall.get('/', async (req: Request, res: Response) => {
   try {
     const weatherData = await fetchOnecall(req);
-    res.json(weatherData);
+    res.status(200).json(weatherData);
   } catch (error) {
-    res.status(res.statusCode).json(getAxiosError(error));
+    res.status(500).json(getAxiosError(error));
   }
 });
 

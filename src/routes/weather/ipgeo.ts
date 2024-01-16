@@ -27,9 +27,9 @@ const ipgeo = Router();
 ipgeo.get('/', async (req: Request, res: Response) => {
   try {
     const data = await fetchIpGeo(req);
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
-    res.status(res.statusCode).json(getAxiosError(error));
+    res.status(500).json(getAxiosError(error));
   }
 });
 
