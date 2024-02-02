@@ -1,1 +1,1 @@
-Backend for my weather app project.
+Express server for my ai-tools weather-fe project.
