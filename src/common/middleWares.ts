@@ -11,7 +11,8 @@ dotenv.config();
 const nodeEnv = process.env.NODE_ENV;
 const weatherDomain = process.env.DOMAIN_WEATHER;
 const aiDomain = process.env.DOMAIN_AI;
-const whitelist = [weatherDomain, aiDomain];
+const mainSite = process.env.DOMAIN_MAIN;
+const whitelist = [weatherDomain, aiDomain, mainSite];
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
