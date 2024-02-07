@@ -2,13 +2,10 @@ import { Router } from 'express';
 import { createNewUser, isEmailTaken } from '@/database/users.js';
 import pool, { getValue, transaction } from '@/database/utils.js';
 import { hashPassword } from '@/common/utils.js';
-import { handleCors } from '@/common/middleWares.js';
 import logError from '@/common/logError.js';
 
 type Key = 'firstname' | 'lastname' | 'email' | 'password' | 'dateOfBirth';
 const users = Router();
-
-users.use(handleCors);
 
 users.get('/', async (_req, res) => {
   try {

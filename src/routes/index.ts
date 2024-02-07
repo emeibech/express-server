@@ -4,9 +4,11 @@ import weather from './weather/weather.js';
 import users from './users/users.js';
 import auth from './auth/auth.js';
 import logVisit from '@/common/logVisit.js';
+import { handleCors } from '@/common/middleWares.js';
 
 const index = Router();
 const partialIp = process.env.PARTIAL_IP ?? '';
+index.use(handleCors);
 
 index.get('/', (req, res, next) => {
   try {
