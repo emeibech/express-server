@@ -7,6 +7,7 @@ import storyGenerator from './storyGenerator.js';
 import toneChanger from './toneChanger.js';
 import conversations from './conversations/conversations.js';
 import titleCreator from './titleCreator.js';
+import imageTranslator from './imageTranslator.js';
 
 const ai = Router();
 
@@ -18,5 +19,6 @@ ai.use('/tonechanger', toneChanger);
 ai.use('/generalassistant', generalAssistant);
 ai.use('/conversations', conversations);
 ai.use('/titlecreator', titleCreator);
+ai.use('/imagetranslator', imageTranslator);
 
 export default ai;
