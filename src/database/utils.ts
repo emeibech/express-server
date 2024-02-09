@@ -9,7 +9,7 @@ const { Pool } = pkg;
 const pool = new Pool();
 
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+  logError(`Pool unexpected error: ${err}`);
   process.exit(-1);
 });
 
@@ -39,7 +39,6 @@ export async function transaction(queries: QueryParams[]) {
     }
 
     await client.query('COMMIT');
-    console.log('Transaction successful');
   } catch (error) {
     await client.query('ROLLBACK');
     logError(`transaction at @/database/utils.ts: ${error}`);

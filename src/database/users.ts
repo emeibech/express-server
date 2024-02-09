@@ -31,8 +31,6 @@ export async function createNewUser({
     };
 
     await pool.query(query);
-
-    console.log('New user created');
   } catch (error) {
     logError(`createNewUser at @/database/users.ts: ${error}`);
   }
