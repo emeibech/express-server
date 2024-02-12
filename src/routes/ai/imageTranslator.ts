@@ -9,6 +9,7 @@ import {
   decrementRemainingUsage,
   resetRateLimit,
 } from '@/database/rateLimits.js';
+import type { CustomRequest } from '@/types/common.js';
 
 const imageTranslator = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -18,9 +19,11 @@ imageTranslator.post(
   upload.single('image'),
   handleAccess,
   rateLimiter,
-  async (req, res) => {
+  async (req: CustomRequest, res) => {
     try {
-      const { user, timestamp, instructions } = req.body;
+      const instructions = req.body.instructions;
+      const user = req.user;
+      const timestamp = req.timestamp;
 
       if (!user) {
         logError('imageTranslator at @/routes/ai/: user is undefined.');

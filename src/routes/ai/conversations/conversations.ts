@@ -4,18 +4,26 @@ import { Router } from 'express';
 import messages from './messages/messages.js';
 import { getPagedChunk } from './utils.js';
 import logError from '@/common/logError.js';
+import type { CustomRequest } from '@/types/common.js';
 
 const conversations = Router();
 conversations.use(handleAccess);
 
 const chatInterfaces = ['codingassistant', 'generalassistant', 'eli5'];
 
-conversations.get('/', async (req, res) => {
+conversations.get('/', async (req: CustomRequest, res) => {
   try {
-    const { user } = req.body;
+    const user = req.user;
     const chatInterface = req.query.chatinterface;
     const page = Number(req.query.page);
     const length = Number(req.query.length);
+
+    if (!user) {
+      logError('imageTranslator at @/routes/ai/: user is undefined.');
+      return res
+        .status(500)
+        .json({ message: 'An error occured in the server.' });
+    }
 
     if (chatInterface && !chatInterfaces.includes(chatInterface.toString())) {
       return res.status(404).json({ message: 'chatinterface is invalid.' });
@@ -53,10 +61,17 @@ conversations.get('/', async (req, res) => {
   }
 });
 
-conversations.post('/', async (req, res) => {
+conversations.post('/', async (req: CustomRequest, res) => {
   try {
     const { chatInterface, title } = req.body;
-    const { uid } = req.body.user;
+    const user = req.user;
+
+    if (!user) {
+      logError('imageTranslator at @/routes/ai/: user is undefined.');
+      return res
+        .status(500)
+        .json({ message: 'An error occured in the server.' });
+    }
 
     if (!chatInterfaces.includes(chatInterface.toString())) {
       return res.status(400).json({ message: 'chatInterface is invalid.' });
@@ -67,7 +82,7 @@ conversations.post('/', async (req, res) => {
       INSERT INTO conversations (chat_interface, title, user_id)
         VALUES ($1, $2, $3) RETURNING id, title, last_updated
     `,
-      [chatInterface, title, uid],
+      [chatInterface, title, user.uid],
     );
 
     res.status(200).json({
@@ -84,9 +99,18 @@ conversations.post('/', async (req, res) => {
   }
 });
 
-conversations.delete('/:id', async (req, res) => {
+conversations.delete('/:id', async (req: CustomRequest, res) => {
   try {
     const id = req.params.id;
+    const user = req.user;
+
+    if (!user) {
+      logError('imageTranslator at @/routes/ai/: user is undefined.');
+      return res
+        .status(500)
+        .json({ message: 'An error occured in the server.' });
+    }
+
     await pool.query('DELETE FROM conversations WHERE id = $1', [id]);
     res.status(200).json({ message: 'Conversation deleted.' });
   } catch (error) {
@@ -95,10 +119,18 @@ conversations.delete('/:id', async (req, res) => {
   }
 });
 
-conversations.patch('/:id', async (req, res) => {
+conversations.patch('/:id', async (req: CustomRequest, res) => {
   try {
     const id = req.params.id;
     const { title, lastUpdated } = req.body;
+    const user = req.user;
+
+    if (!user) {
+      logError('imageTranslator at @/routes/ai/: user is undefined.');
+      return res
+        .status(500)
+        .json({ message: 'An error occured in the server.' });
+    }
 
     const [conversation] = await getValue({
       text: 'SELECT id FROM conversations WHERE id = $1',

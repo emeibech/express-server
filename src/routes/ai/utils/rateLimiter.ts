@@ -1,7 +1,8 @@
 import logError from '@/common/logError.js';
 import { getTimestamp, isLimitReached } from '@/database/rateLimits.js';
 import { transaction } from '@/database/utils.js';
-import type { NextFunction, Request, Response } from 'express';
+import type { CustomRequest } from '@/types/common.js';
+import type { NextFunction, Response } from 'express';
 
 const superUsers: number[] = JSON.parse(process.env.SUPERUSERS || '[]');
 
@@ -9,12 +10,18 @@ const superUsers: number[] = JSON.parse(process.env.SUPERUSERS || '[]');
 const defaultDuration = 86400;
 
 export default async function rateLimiter(
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    const { uid } = req.body.user;
+    const uid = req.user?.uid;
+
+    if (!uid) {
+      logError('rateLimiter at @/routes/ai/utils: uid is undefined');
+      throw new Error('rateLimiter at @/routes/ai/utils: uid is undefined');
+    }
+
     await insertRateLimit(uid);
 
     // for accounts you want to exempt from rate limiter, like your own account
@@ -26,7 +33,7 @@ export default async function rateLimiter(
     const timestamp = await getTimestamp(uid);
 
     if (timeNow - timestamp >= defaultDuration) {
-      req.body.timestamp = timestamp;
+      req.timestamp = timestamp;
       return next();
     }
 
@@ -41,7 +48,7 @@ export default async function rateLimiter(
   }
 }
 
-export async function insertRateLimit(id: string) {
+export async function insertRateLimit(id: number) {
   try {
     await transaction([
       {

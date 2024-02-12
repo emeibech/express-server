@@ -3,8 +3,9 @@ import cors, { CorsOptions, CorsRequest } from 'cors';
 import rateLimit from 'express-rate-limit';
 import { verifyToken } from './utils.js';
 import { verifySession } from '@/database/sessions.js';
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import type { HandleRateLimitParams } from '@/types/middlewares.js';
+import type { CustomRequest } from '@/types/common.js';
 
 dotenv.config();
 
@@ -47,7 +48,7 @@ export function handleRateLimit({ max, minutes }: HandleRateLimitParams) {
 }
 
 export async function handleAccess(
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -69,7 +70,7 @@ export async function handleAccess(
       return res.status(401).json({ message: 'Session has expired.' });
     }
 
-    req.body.user = payload;
+    req.user = payload;
 
     next();
   } catch (error) {
@@ -79,7 +80,7 @@ export async function handleAccess(
 
 export function handleRouteError(
   err: Error,
-  _req: Request,
+  _req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) {

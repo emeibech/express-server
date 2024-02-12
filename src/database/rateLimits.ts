@@ -4,7 +4,7 @@ import pool, { transaction } from './utils.js';
 const defaultDuration = 86400;
 const defaultLimit = 50;
 
-export async function getTimestamp(userId: string) {
+export async function getTimestamp(userId: number) {
   try {
     const query = 'SELECT timestamp FROM rate_limits WHERE user_id = $1';
     const values = [userId];
@@ -16,7 +16,7 @@ export async function getTimestamp(userId: string) {
   }
 }
 
-export async function getRemainingUsage(userId: string) {
+export async function getRemainingUsage(userId: number) {
   try {
     const query = 'SELECT remaining_usage FROM rate_limits WHERE user_id = $1';
     const values = [userId];
@@ -28,7 +28,7 @@ export async function getRemainingUsage(userId: string) {
   }
 }
 
-export async function isLimitReached(userId: string) {
+export async function isLimitReached(userId: number) {
   try {
     const remainingUsage = await getRemainingUsage(userId);
     return remainingUsage === 0;
@@ -37,7 +37,7 @@ export async function isLimitReached(userId: string) {
   }
 }
 
-export async function resetRateLimit(userId: string, timestamp: number) {
+export async function resetRateLimit(userId: number, timestamp: number) {
   try {
     const timeNow = Date.now() / 1000;
 
@@ -68,7 +68,7 @@ export async function resetRateLimit(userId: string, timestamp: number) {
   }
 }
 
-export async function decrementRemainingUsage(userId: string) {
+export async function decrementRemainingUsage(userId: number) {
   try {
     await transaction([
       {

@@ -55,7 +55,7 @@ export function decodeToken(token: string) {
   return JSON.parse(decoded);
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: number) {
   const secret = process.env.JWT_SECRET || 'jyrf45gq978n_97YG4Q5';
   const sessionToken = nanoid();
   const session = await pool.query(

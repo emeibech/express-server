@@ -9,6 +9,7 @@ import {
   decrementRemainingUsage,
   resetRateLimit,
 } from '@/database/rateLimits.js';
+import type { CustomRequest } from '@/types/common.js';
 
 const toneChanger = Router();
 
@@ -16,9 +17,18 @@ toneChanger.use(handleAccess);
 toneChanger.use(rateLimiter);
 toneChanger.use(validateUserContent);
 
-toneChanger.post('/', async (req, res) => {
+toneChanger.post('/', async (req: CustomRequest, res) => {
   try {
-    const { user, timestamp, userContent } = req.body;
+    const userContent = req.body.userContent;
+    const user = req.user;
+    const timestamp = req.timestamp;
+
+    if (!user) {
+      logError('imageTranslator at @/routes/ai/: user is undefined.');
+      return res
+        .status(500)
+        .json({ message: 'An error occured in the server.' });
+    }
 
     if (!userContent) {
       return res.status(400).json({ message: 'Request has no content.' });
