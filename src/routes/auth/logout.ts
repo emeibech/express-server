@@ -7,16 +7,16 @@ const logout = Router();
 
 logout.post('/', async (req, res) => {
   try {
-    const { act } = req.body;
+    const token = req.headers.authorization;
 
-    if (!act) {
+    if (!token) {
       return res.status(400).json({ message: 'Incomplete parameter.' });
     }
 
-    const { payload, expired } = await verifyToken(act);
+    const { payload, expired } = await verifyToken(token);
 
     if (expired) {
-      const { sid } = decodeToken(act);
+      const { sid } = decodeToken(token);
 
       await transaction([
         {
