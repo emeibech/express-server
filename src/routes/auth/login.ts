@@ -2,10 +2,12 @@ import logError from '@/common/logError.js';
 import { comparePasswords, createSession } from '@/common/utils.js';
 import { getValue } from '@/database/utils.js';
 import { Router } from 'express';
+import { CustomRequest } from '@/types/common.js';
 
 const login = Router();
+const nodeEnv = process.env.NODE_ENV;
 
-login.post('/', async (req, res) => {
+login.post('/', async (req: CustomRequest, res) => {
   try {
     const { email, password } = req.body;
 
@@ -35,7 +37,14 @@ login.post('/', async (req, res) => {
 
     const token = await createSession(user.id);
 
-    return res.status(200).json({ message: 'Login succeeded!', act: token });
+    res.cookie('act', token, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: nodeEnv === 'production',
+      signed: true,
+    });
+
+    return res.status(200).json({ message: 'Login succeeded!' });
   } catch (error) {
     res.status(500).json({ error });
     logError(`login POST at @/routes/auth/: ${error}`);

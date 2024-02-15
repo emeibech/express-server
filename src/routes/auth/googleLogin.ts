@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { createSession } from '@/common/utils.js';
 import logError from '@/common/logError.js';
 
+const nodeEnv = process.env.NODE_ENV;
 const googleLogin = Router();
 
 googleLogin.post('/', async (req, res) => {
@@ -26,16 +27,26 @@ googleLogin.post('/', async (req, res) => {
 
       const token = await createSession(newUser.rows[0].id);
 
-      return res
-        .status(200)
-        .json({ message: 'Login using Google succeeded!', act: token });
+      res.cookie('act', token, {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: nodeEnv === 'production',
+        signed: true,
+      });
+
+      return res.status(200).json({ message: 'Login using Google succeeded!' });
     }
 
     const token = await createSession(existingUser.id);
 
-    return res
-      .status(200)
-      .json({ message: 'Login using Google succeeded!', act: token });
+    res.cookie('act', token, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: nodeEnv === 'production',
+      signed: true,
+    });
+
+    return res.status(200).json({ message: 'Login using Google succeeded!' });
   } catch (error) {
     res.status(500).json({ error });
     logError(`googleLogin POST at @/routes/auth/: ${error}`);
