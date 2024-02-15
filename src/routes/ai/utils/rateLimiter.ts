@@ -15,29 +15,29 @@ export default async function rateLimiter(
   next: NextFunction,
 ) {
   try {
-    const uid = req.user?.uid;
+    const user = req.user;
 
-    if (!uid) {
-      logError('rateLimiter at @/routes/ai/utils: uid is undefined');
-      throw new Error('rateLimiter at @/routes/ai/utils: uid is undefined');
+    if (!user) {
+      logError('rateLimiter at @/routes/ai/utils: user is undefined');
+      throw new Error('rateLimiter at @/routes/ai/utils: user is undefined');
     }
 
-    await insertRateLimit(uid);
+    await insertRateLimit(user);
 
     // for accounts you want to exempt from rate limiter, like your own account
-    if (superUsers.includes(uid)) {
+    if (superUsers.includes(user)) {
       return next();
     }
 
     const timeNow = Date.now() / 1000;
-    const timestamp = await getTimestamp(uid);
+    const timestamp = await getTimestamp(user);
 
     if (timeNow - timestamp >= defaultDuration) {
       req.timestamp = timestamp;
       return next();
     }
 
-    if (await isLimitReached(uid)) {
+    if (await isLimitReached(user)) {
       return res.status(429).json({ message: 'Rate limit reached.' });
     }
 

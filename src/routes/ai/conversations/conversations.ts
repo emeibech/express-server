@@ -34,7 +34,7 @@ conversations.get('/', async (req: CustomRequest, res) => {
               SELECT id, title, last_updated FROM conversations
                 WHERE user_id = $1 AND chat_interface = $2
             `,
-      values: [user.uid, chatInterface],
+      values: [user, chatInterface],
     });
 
     const latestFirst = conversationData
@@ -82,7 +82,7 @@ conversations.post('/', async (req: CustomRequest, res) => {
       INSERT INTO conversations (chat_interface, title, user_id)
         VALUES ($1, $2, $3) RETURNING id, title, last_updated
     `,
-      [chatInterface, title, user.uid],
+      [chatInterface, title, user],
     );
 
     res.status(200).json({

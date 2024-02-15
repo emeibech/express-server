@@ -50,10 +50,10 @@ imageTranslator.post(
       });
 
       if (timestamp) {
-        await resetRateLimit(user.uid, timestamp);
+        await resetRateLimit(user, timestamp);
       }
 
-      await decrementRemainingUsage(user.uid);
+      await decrementRemainingUsage(user);
 
       res.end();
     } catch (error) {

@@ -3,17 +3,15 @@ import { Router } from 'express';
 import noStreamChatCompletion from './utils/noStreamCompletion.js';
 import logError from '@/common/logError.js';
 import { validateUserContent } from './utils/validateUserContent.js';
+import { handleAccess } from '@/common/middleWares.js';
 
 const titleCreator = Router();
+titleCreator.use(handleAccess);
 titleCreator.use(validateUserContent);
 
 titleCreator.post('/', async (req, res) => {
   try {
     const userContent = req.body.userContent;
-
-    if (!userContent) {
-      return res.status(400).json({ message: 'Request has no content.' });
-    }
 
     await noStreamChatCompletion({
       res,

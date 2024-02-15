@@ -18,8 +18,6 @@ export function validateMessages(
     const { messages } = req.body;
     const parsed = messagesSchema.safeParse(messages);
 
-    console.log(messages);
-
     if (!parsed.success) {
       return res.status(400).json({
         message:

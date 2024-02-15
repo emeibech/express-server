@@ -30,10 +30,6 @@ codeAnalyzer.post('/', async (req: CustomRequest, res) => {
         .json({ message: 'An error occured in the server.' });
     }
 
-    if (!userContent) {
-      return res.status(400).json({ message: 'Request has no content.' });
-    }
-
     await chatCompletion({
       res,
       userContent,
@@ -43,10 +39,10 @@ codeAnalyzer.post('/', async (req: CustomRequest, res) => {
     });
 
     if (timestamp) {
-      await resetRateLimit(user.uid, timestamp);
+      await resetRateLimit(user, timestamp);
     }
 
-    await decrementRemainingUsage(user.uid);
+    await decrementRemainingUsage(user);
 
     res.end();
   } catch (error) {
