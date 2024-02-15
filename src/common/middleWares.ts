@@ -1,15 +1,17 @@
 import dotenv from 'dotenv';
-import cors, { CorsOptions, CorsRequest } from 'cors';
+import cors, { CorsOptions } from 'cors';
 import rateLimit from 'express-rate-limit';
-import { verifyToken } from './utils.js';
-import { verifySession } from '@/database/sessions.js';
+import { decodeToken, generateAct, verifyToken } from './utils.js';
 import type { NextFunction, Response } from 'express';
 import type { HandleRateLimitParams } from '@/types/middlewares.js';
 import type { CustomRequest } from '@/types/common.js';
+import { deleteRft, verifyRft } from '@/database/refreshTokens.js';
+import logError from './logError.js';
 
 dotenv.config();
 
 const nodeEnv = process.env.NODE_ENV;
+const localhost = process.env.LOCALHOST;
 const weatherDomain = process.env.DOMAIN_WEATHER;
 const aiDomain = process.env.DOMAIN_AI;
 const mainSite = process.env.DOMAIN_MAIN;
@@ -23,17 +25,18 @@ const corsOptions: CorsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  credentials: true,
 };
 
 export function handleCors(
-  req: CorsRequest,
+  req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) {
   if (nodeEnv === 'production') {
     cors(corsOptions)(req, res, next);
   } else {
-    cors()(req, res, next);
+    cors({ origin: localhost, credentials: true })(req, res, next);
   }
 }
 
@@ -53,26 +56,47 @@ export async function handleAccess(
   next: NextFunction,
 ) {
   try {
-    const token = req.headers.authorization;
+    const act = req.signedCookies.act;
 
-    if (!token) {
+    if (!act) {
       return res.status(401).json({ message: 'Access unauthorized.' });
     }
 
-    const { error, payload, expired } = await verifyToken(token);
+    const { error, payload, expired } = await verifyToken(act);
 
-    if (expired) return res.status(401).json({ message: 'Token has expired.' });
-    if (error) return res.status(401).json({ message: error });
-
-    const isSessionValid = await verifySession(payload?.sid);
-
-    if (!isSessionValid) {
-      return res.status(401).json({ message: 'Session has expired.' });
+    if (payload) {
+      req.user = payload.uid;
+      return next();
     }
 
-    req.user = payload;
+    const { uid, rft } = decodeToken(act);
 
-    next();
+    if (error) {
+      logError(`handleAccess @/common/middlWares: ${error}`);
+      return res.status(500).json({ message: error });
+    }
+
+    if (expired) {
+      const isRftValid = await verifyRft(rft);
+
+      if (isRftValid) {
+        const token = await generateAct({ userId: uid, rft });
+        req.user = uid;
+
+        res.cookie('act', token, {
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: nodeEnv === 'production',
+          signed: true,
+        });
+
+        return next();
+      } else {
+        await deleteRft(rft);
+        res.clearCookie('act');
+        return res.status(403).json({ message: 'Refresh token has expired.' });
+      }
+    }
   } catch (error) {
     next(error);
   }

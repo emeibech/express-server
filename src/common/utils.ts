@@ -2,12 +2,14 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { getJwtError } from './getErrorMessage.js';
-import { TokenPayload } from '@/types/common.js';
 import pool from '@/database/utils.js';
 import { nanoid } from 'nanoid';
 import logError from './logError.js';
+import { GenerateAct, TokenPayload } from '@/types/common.js';
 
 dotenv.config();
+
+const secret = process.env.JWT_SECRET || 'jyrf45gq978n_97YG4Q5';
 
 export async function hashPassword(password: string) {
   try {
@@ -40,11 +42,19 @@ export async function verifyToken(token: string) {
   } catch (error) {
     const jwtError = getJwtError(error);
     if (jwtError.includes('jwt expired')) return { expired: true };
+    logError(`verfifyToken @/common/utils: ${getJwtError(error)}`);
     return { error: getJwtError(error) };
   }
 }
 
 export function decodeToken(token: string) {
+  if (!token) {
+    logError('decodeToken @/common/utils: token is undefined.');
+    throw new Error(
+      'decodeToken @/common/utils: An error occured decoding token.',
+    );
+  }
+
   const payload = token
     .split('.')
     .filter((_part, index) => index === 1)
@@ -56,19 +66,24 @@ export function decodeToken(token: string) {
 }
 
 export async function createSession(userId: number) {
-  const secret = process.env.JWT_SECRET || 'jyrf45gq978n_97YG4Q5';
-  const sessionToken = nanoid();
-  const session = await pool.query(
-    'INSERT INTO sessions (token, user_id) VALUES ($1, $2) RETURNING id',
-    [sessionToken, userId],
+  const refreshToken = nanoid();
+  await pool.query(
+    'INSERT INTO refresh_tokens (token, user_id) VALUES ($1, $2) RETURNING id',
+    [refreshToken, userId],
   );
 
   const payload = {
     uid: userId,
-    sid: session.rows[0].id,
+    rft: refreshToken,
   };
 
-  const token = jwt.sign(payload, secret, { expiresIn: '15 days' });
+  const token = jwt.sign(payload, secret, { expiresIn: 15 * 60 });
 
+  return token;
+}
+
+export async function generateAct({ userId, rft }: GenerateAct) {
+  const payload = { uid: userId, rft };
+  const token = jwt.sign(payload, secret, { expiresIn: 15 * 60 });
   return token;
 }
