@@ -102,15 +102,13 @@ export async function handleAccess(
   }
 }
 
-export function handleRouteError(
-  err: Error,
+export function handleCatchError(
+  error: Error,
   _req: CustomRequest,
   res: Response,
-  next: NextFunction,
 ) {
-  res.status(res.statusCode).json({
-    [err.name]: err.message,
+  logError(`catchError: ${error.stack}`);
+  return res.status(500).json({
+    [error.name]: error.message,
   });
-
-  next();
 }
