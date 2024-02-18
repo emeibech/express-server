@@ -101,14 +101,3 @@ export async function handleAccess(
     next(error);
   }
 }
-
-export function handleCatchError(
-  error: Error,
-  _req: CustomRequest,
-  res: Response,
-) {
-  logError(`catchError: ${error.stack}`);
-  return res.status(500).json({
-    [error.name]: error.message,
-  });
-}

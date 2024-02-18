@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import index from './routes/index.js';
-import { handleCatchError, handleCors } from './common/middleWares.js';
+import { handleCors } from './common/middleWares.js';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -15,7 +15,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser(secret));
 app.use('/', index);
-app.use(handleCatchError);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
