@@ -8,15 +8,9 @@ import logVisit from '@/common/logVisit.js';
 const index = Router();
 const partialIp = process.env.PARTIAL_IP ?? '';
 
-index.get('/', (req, res, next) => {
+index.get('/', (req, _res, next) => {
   try {
     const ip = req.header('X-Real-IP') ?? req.ip;
-
-    res.json({
-      serverStatus: 'Active',
-      ip,
-    });
-
     if (ip?.toString().includes(partialIp)) return;
     logVisit(req.headers.origin);
   } catch (error) {
