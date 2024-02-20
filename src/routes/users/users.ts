@@ -42,7 +42,10 @@ users.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Incomplete parameter.' });
     }
 
-    const { valid } = await validate(email);
+    const { valid } = await validate({
+      email,
+      validateSMTP: false,
+    });
 
     if (!valid) {
       return res.status(400).json({ message: 'Email is not valid.' });
