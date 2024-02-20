@@ -67,8 +67,9 @@ export function decodeToken(token: string) {
 
 export async function createSession(userId: number) {
   const refreshToken = nanoid();
+
   await pool.query(
-    'INSERT INTO refresh_tokens (token, user_id) VALUES ($1, $2) RETURNING id',
+    'INSERT INTO refresh_tokens (token, user_id) VALUES ($1, $2)',
     [refreshToken, userId],
   );
 

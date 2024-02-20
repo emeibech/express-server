@@ -25,12 +25,14 @@ export async function createNewUser({
     const query = {
       text: `
         INSERT INTO users (firstname, lastname, email, password, date_of_birth)
-        VALUES ($1, $2, $3, $4, $5);
+        VALUES ($1, $2, $3, $4, $5) RETURNING id;
       `,
       values: [firstname, lastname, email, hashedPassword, dateOfBirth],
     };
 
-    await pool.query(query);
+    const id = await pool.query(query);
+
+    return id.rows[0].id;
   } catch (error) {
     logError(`createNewUser at @/database/users.ts: ${error}`);
   }

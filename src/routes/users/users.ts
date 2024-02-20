@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { createNewUser, isEmailTaken } from '@/database/users.js';
 import pool, { getValue, transaction } from '@/database/utils.js';
-import { hashPassword } from '@/common/utils.js';
+import { createSession, hashPassword } from '@/common/utils.js';
 import logError from '@/common/logError.js';
 import { validate } from 'deep-email-validator';
 
 type Key = 'firstname' | 'lastname' | 'email' | 'password' | 'dateOfBirth';
+const nodeEnv = process.env.NODE_ENV;
 const users = Router();
 
 users.get('/', async (_req, res) => {
@@ -55,15 +56,30 @@ users.post('/', async (req, res) => {
 
     const hashedPassword = await hashPassword(password);
 
-    if (hashedPassword) {
-      await createNewUser({
-        firstname,
-        lastname,
-        email,
-        hashedPassword,
-        dateOfBirth,
-      });
+    if (!hashedPassword) {
+      logError('@/routes/users: hashedPassword is undefined');
+
+      return res
+        .status(500)
+        .json({ message: 'An Error occured while creating a new account' });
     }
+
+    const uid = await createNewUser({
+      firstname,
+      lastname,
+      email,
+      hashedPassword,
+      dateOfBirth,
+    });
+
+    const token = await createSession(uid);
+
+    res.cookie('act', token, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: nodeEnv === 'production',
+      signed: true,
+    });
 
     res.status(201).json({ message: 'New user created successfully.' });
   } catch (error) {
