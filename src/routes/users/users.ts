@@ -3,6 +3,7 @@ import { createNewUser, isEmailTaken } from '@/database/users.js';
 import pool, { getValue, transaction } from '@/database/utils.js';
 import { hashPassword } from '@/common/utils.js';
 import logError from '@/common/logError.js';
+import { validate } from 'deep-email-validator';
 
 type Key = 'firstname' | 'lastname' | 'email' | 'password' | 'dateOfBirth';
 const users = Router();
@@ -35,16 +36,21 @@ users.get('/:id', async (req, res) => {
 users.post('/', async (req, res) => {
   try {
     const { firstname, lastname, password, email, dateOfBirth } = req.body;
+
+    if (!firstname || !email || !password || !dateOfBirth) {
+      return res.status(400).json({ message: 'Incomplete parameter.' });
+    }
+
+    const { valid } = await validate(email);
+
+    if (!valid) {
+      return res.status(400).json({ message: 'Email is not valid.' });
+    }
+
     const emailTaken = await isEmailTaken(email);
 
     if (emailTaken) {
-      res.status(409).json({ error: 'Email is already taken.' });
-      return;
-    }
-
-    if (!firstname || !email || !password || !dateOfBirth) {
-      res.status(400).json({ error: 'Incomplete parameter.' });
-      return;
+      return res.status(409).json({ message: 'Email is already taken.' });
     }
 
     const hashedPassword = await hashPassword(password);
