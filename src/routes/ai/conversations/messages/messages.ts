@@ -17,7 +17,7 @@ messages.get('/', async (req, res) => {
       values: [conversationId],
     });
 
-    res.status(200).json({ messages });
+    res.status(200).json({ messages: messages.sort((a, b) => a.id - b.id) });
   } catch (error) {
     res.status(500).json({ error });
     logError(`messages GET at @/routes/conversations/messages: ${error}`);
