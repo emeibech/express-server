@@ -38,6 +38,7 @@ login.post('/', async (req: CustomRequest, res) => {
     const token = await createSession(user.id);
 
     res.cookie('act', token, {
+      maxAge: 1000 * 60 * 60 * 24 * 15,
       httpOnly: true,
       sameSite: 'strict',
       secure: nodeEnv === 'production',

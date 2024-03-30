@@ -40,6 +40,7 @@ googleLogin.post('/', async (req, res) => {
     const token = await createSession(existingUser.id);
 
     res.cookie('act', token, {
+      maxAge: 1000 * 60 * 60 * 24 * 15,
       httpOnly: true,
       sameSite: 'strict',
       secure: nodeEnv === 'production',
