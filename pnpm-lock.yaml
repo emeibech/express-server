@@ -45,8 +45,8 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
       openai:
-        specifier: ^4.45.0
-        version: 4.45.0
+        specifier: ^4.47.1
+        version: 4.47.1
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -1196,8 +1196,8 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  openai@4.45.0:
-    resolution: {integrity: sha512-uszUQrl9eQPCA9a7Zml+Eizb3mG0JDd8zUl528OM6Ccn039dqbOmUivL5s8zUM6iJMRMvNGRMXS9yuuR1Bv2sw==}
+  openai@4.47.1:
+    resolution: {integrity: sha512-WWSxhC/69ZhYWxH/OBsLEirIjUcfpQ5+ihkXKp06hmeYXgBBIUCa9IptMzYx6NdkiOCsSGYCnTIsxaic3AjRCQ==}
     hasBin: true
 
   optionator@0.9.3:
@@ -2858,7 +2858,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@4.45.0:
+  openai@4.47.1:
     dependencies:
       '@types/node': 18.19.14
       '@types/node-fetch': 2.6.11

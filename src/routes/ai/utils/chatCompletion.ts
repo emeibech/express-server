@@ -13,7 +13,7 @@ const chatCompletion = async ({
     const stream = await openai.chat.completions.create({
       temperature,
       stream: true,
-      model: model || 'gpt-4-turbo-2024-04-09',
+      model: model || 'gpt-4o',
       messages: [
         {
           role: 'system',
